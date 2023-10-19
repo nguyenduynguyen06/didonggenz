@@ -8,7 +8,7 @@
     "start": "npm install && concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && npm install && npm start",
     "client": "cd client && npm install && npm start",
-    "client-install": "cd client && npm install",
+    "client-install": "cd client && npm install && npm install react-scripts --save",
     "client-build": "cd client && npm run build",
     "heroku-postbuild": "npm run client-install && npm run client-build"
   },
