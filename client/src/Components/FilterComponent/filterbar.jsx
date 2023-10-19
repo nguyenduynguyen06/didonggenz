@@ -140,16 +140,6 @@ const FilterBar = () => {
             </NavLink></Menu.Item>
         </Menu>
     );
-    const menu3 = (
-        <Menu>
-            <Menu.Item key="13">5 sao</Menu.Item>
-            <Menu.Item key="14">4 sao</Menu.Item>
-            <Menu.Item key="15">3 sao</Menu.Item>
-            <Menu.Item key="16">2 sao</Menu.Item>
-            <Menu.Item key="17">1 sao</Menu.Item>
-
-        </Menu>
-    );
    return (
         <WrapperFilterList>
             <NavLink to= {`/hightoLow/${nameCategory}${hasNameBrand}`}>
@@ -170,11 +160,6 @@ const FilterBar = () => {
                 </a>
             </Dropdown>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Dropdown overlay={menu3} placement="bottomLeft">
-          <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-            Số sao <DownOutlined />
-          </a>
-        </Dropdown>
         <NavLink  to={{
                     pathname: `${pathToUse}/${nameCategory}${hasNameBrand}`,
                     search: '?includeOldPrice=true',
