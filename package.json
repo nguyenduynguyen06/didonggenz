@@ -5,8 +5,8 @@
   "main": "server/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm install && concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && npm install && npm start",
+    "start": "npm install && npm run server",
+    "server": "cd server && npm start",
     "client": "cd client && npm install && npm start",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --force --prefix client  &&  npm i @mui/icons-material --prefix client && npm install --save-dev @babel/plugin-proposal-private-property-in-object --force --prefix client && npm install react-scripts --save && npm run build --prefix client"
   },
