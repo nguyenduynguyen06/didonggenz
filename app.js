@@ -43,7 +43,6 @@ app.get('*',(req,res) =>{
 })
 }
 connect2DB();
-const PORT = process.env.PORT 
-server.listen(PORT, () => {
-    console.log(`Server is now running on PORT: ${PORT}`);
-})
+app.listen(process.env.PORT || 3000, function(){
+    console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+  });

@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm install && node app.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --force --prefix client  &&  npm i @mui/icons-material --prefix client && npm install --save-dev @babel/plugin-proposal-private-property-in-object --prefix client && npm install react-scripts --save && npm run build --prefix client"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm rebuild && npm install --force --prefix client  &&  npm i @mui/icons-material --prefix client && npm install --save-dev @babel/plugin-proposal-private-property-in-object --prefix client && npm install react-scripts --save && npm run build --prefix client"
   },
   "author": "duynguyen",
   "license": "ISC",
