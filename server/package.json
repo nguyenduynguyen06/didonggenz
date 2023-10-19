@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "node app.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --force --prefix client  &&  npm i @mui/icons-material --prefix client && npm install --save-dev @babel/plugin-proposal-private-property-in-object --prefix client && npm install react-scripts --save && npm run build --prefix client"
   },
   "author": "duynguyen",
   "license": "ISC",
