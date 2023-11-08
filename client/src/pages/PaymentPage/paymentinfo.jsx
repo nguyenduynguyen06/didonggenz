@@ -78,7 +78,7 @@ const PaymentInfo = () => {
             };
             axios.post(`${process.env.REACT_APP_API_URL}/VNPAY/create_payment_url`, paymentData)
             .then(response => {
-                window.open(response.data.data);
+                
             })
             .catch(error => {
                 console.error(error);
@@ -143,7 +143,6 @@ const PaymentInfo = () => {
       const[data,setData] = useState(null);
       const [vouchercode, setVoucherCode] = useState('');
       const [totalVoucher,settotalVoucher] = useState(null);
-      const user = useSelector((state)=> state.user)
       const checkVoucher = (data) => {
         axios.post(`${process.env.REACT_APP_API_URL}/voucher/useVoucher`, data)
           .then((response) => {
