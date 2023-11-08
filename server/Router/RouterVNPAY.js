@@ -3,7 +3,7 @@ let router = express.Router();
 let $ = require('jquery');
 const request = require('request');
 const moment = require('moment');
-const cryptoJS = require('crypto-js');
+const crypto = require('crypto');
 let querystring = require('qs');
 function sortObject(obj) {
 	let sorted = {};
@@ -70,7 +70,7 @@ router.post('/create_payment_url', function (req, res, next) {
     
     const signData = querystring.stringify(vnp_Params, { encode: false });
    
-    const hmac = cryptoJS.createHmac("sha512", secretKey);
+    const hmac = crypto.createHmac("sha512", secretKey);
     const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
     vnp_Params['vnp_SecureHash'] = signed;
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
@@ -92,7 +92,7 @@ router.get('/vnpay_return', function (req, res, next) {
     const secretKey = process.env.VNP_HASH_SECRET;
 
     const signData = querystring.stringify(vnp_Params, { encode: false });
-    const hmac = cryptoJS.createHmac("sha512", secretKey);
+    const hmac = crypto.createHmac("sha512", secretKey);
     const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");     
 
     if (secureHash === signed) {
