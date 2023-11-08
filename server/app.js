@@ -27,6 +27,7 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
     next();
 })
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -39,9 +40,8 @@ app.use('/api/comment',routerComment);
 app.use('/api/brand',routerBrand)
 app.use('/api/cart',routerCart)
 app.use('/api/order',routerOrder)
-app.use('/api/VNPAY', routerVNPAY)
 app.use('/api/voucher',routerVoucher)
-
+app.use('/api/VNPAY', routerVNPAY)
 app.use(express.static(path.join(__dirname,'../client/build')))
 app.get('*',(req,res) =>{
     res.sendFile(path.join(__dirname,'../client/build/index.html'))
