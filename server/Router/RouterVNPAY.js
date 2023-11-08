@@ -1,105 +1,101 @@
-const express = require('express');
-const router = express.Router();
-const sha256 = require('sha.js/sha256'); 
+let express = require('express');
+let router = express.Router();
 let $ = require('jquery');
 const request = require('request');
 const moment = require('moment');
-const querystring = require('querystring');
-
+const cryptoJS = require('crypto-js');
+let querystring = require('qs');
 function sortObject(obj) {
-    const sorted = {};
-    const keys = Object.keys(obj).sort();
-
-    for (const key of keys) {
-        sorted[key] = encodeURIComponent(obj[key]).replace(/%20/g, '+');
+	let sorted = {};
+	let str = [];
+	let key;
+	for (key in obj){
+		if (obj.hasOwnProperty(key)) {
+		str.push(encodeURIComponent(key));
+		}
+	}
+	str.sort();
+    for (key = 0; key < str.length; key++) {
+        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
     }
-
     return sorted;
 }
 
 router.post('/create_payment_url', function (req, res, next) {
+    
     process.env.TZ = 'Asia/Ho_Chi_Minh';
+    
     const date = new Date();
     const createDate = moment(date).format('YYYYMMDDHHmmss');
-
-    const ipAddr =
-        req.headers['x-forwarded-for'] ||
+    
+    const ipAddr = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress;
 
-    const tmnCode = process.env.VNP_TMN_CODE;
-    const secretKey = process.env.VNP_HASH_SECRET;
-    const vnpUrl = process.env.VNP_URL;
-    const returnUrl = process.env.VNP_RETURN_URL;
-    const orderId = moment(date).format('DDHHmmss');
-    const amount = req.body.amount;
-    const OrderInfo = req.body.orderinfo;
-    const bankCode = req.body.bankCode;
+  
+    
+    let tmnCode = process.env.VNP_TMN_CODE;
+    let secretKey = process.env.VNP_HASH_SECRET;
+    let vnpUrl = process.env.VNP_URL;
+    let returnUrl = process.env.VNP_RETURN_URL;
+    let orderId = moment(date).format('DDHHmmss');
+    let amount = req.body.amount;
+    let OrderInfo = req.body.orderinfo;
+    let bankCode = req.body.bankCode;
     let locale = req.body.language;
-
-    if (!locale || locale === 'undefined') {
+    if(locale === null || locale === ''|| locale === 'undefined'){
         locale = 'vn';
     }
-    const currCode = 'VND';
-
-    const vnp_Params = {
-        vnp_Version: '2.1.0',
-        vnp_Command: 'pay',
-        vnp_TmnCode: tmnCode,
-        vnp_Locale: locale,
-        vnp_CurrCode: currCode,
-        vnp_TxnRef: orderId,
-        vnp_OrderInfo: OrderInfo + orderId,
-        vnp_OrderType: 'other',
-        vnp_Amount: amount * 100,
-        vnp_ReturnUrl: returnUrl,
-        vnp_IpAddr: ipAddr,
-        vnp_CreateDate: createDate,
-    };
-
-    if (bankCode && bankCode !== 'undefined') {
+    let currCode = 'VND';
+    let vnp_Params = {};
+    vnp_Params['vnp_Version'] = '2.1.0';
+    vnp_Params['vnp_Command'] = 'pay';
+    vnp_Params['vnp_TmnCode'] = tmnCode;
+    vnp_Params['vnp_Locale'] = locale;
+    vnp_Params['vnp_CurrCode'] = currCode;
+    vnp_Params['vnp_TxnRef'] = orderId;
+    vnp_Params['vnp_OrderInfo'] = OrderInfo + orderId ;
+    vnp_Params['vnp_OrderType'] = 'other';
+    vnp_Params['vnp_Amount'] = amount * 100;
+    vnp_Params['vnp_ReturnUrl'] = returnUrl;
+    vnp_Params['vnp_IpAddr'] = ipAddr;
+    vnp_Params['vnp_CreateDate'] = createDate;
+    if(bankCode !== null && bankCode !== '' && bankCode !== 'undefined'){
         vnp_Params['vnp_BankCode'] = bankCode;
     }
 
-    const sortedParams = sortObject(vnp_Params);
+    vnp_Params = sortObject(vnp_Params);
 
-    const signData = querystring.stringify(sortedParams, { encode: false });
     
-    // Sử dụng sha256 để tạo mã hash thay vì crypto
-    const hmac = new sha256(secretKey);
-    hmac.update(signData);
-    const signed = hmac.digest('hex');
+    const signData = querystring.stringify(vnp_Params, { encode: false });
+   
+    const hmac = cryptoJS.createHmac("sha512", secretKey);
+    const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
     vnp_Params['vnp_SecureHash'] = signed;
+    vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
-    const queryString = querystring.stringify(vnp_Params, { encode: false });
-    const fullVnpUrl = `${vnpUrl}?${queryString}`;
-
-    res.status(200).json({ data: fullVnpUrl });
+    res.status(200).json({ data: vnpUrl })
 });
-
 router.get('/vnpay_return', function (req, res, next) {
-    let vnp_Params = req.query;
+    const vnp_Params = req.query;
 
     const secureHash = vnp_Params['vnp_SecureHash'];
-    const secureHashType = vnp_Params['vnp_SecureHashType'];
+
     delete vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHashType'];
 
     vnp_Params = sortObject(vnp_Params);
 
+    
     const tmnCode = process.env.VNP_TMN_CODE;
     const secretKey = process.env.VNP_HASH_SECRET;
 
-    const querystring = require('qs');
     const signData = querystring.stringify(vnp_Params, { encode: false });
-    
-    // Sử dụng sha256 để tạo mã hash thay vì crypto
-    const hmac = new sha256(secretKey);
-    hmac.update(signData);
-    const signed = hmac.digest('hex');
+    const hmac = cryptoJS.createHmac("sha512", secretKey);
+    const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");     
 
-    if (secureHash === signed && secureHashType === 'SHA256') {
+    if (secureHash === signed) {
         const vnp_ResponseCode = vnp_Params['vnp_ResponseCode'];
         const vnp_TransactionNo = vnp_Params['vnp_TransactionNo'];
         const vnp_OrderInfoEncoded = vnp_Params['vnp_OrderInfo'];
@@ -121,5 +117,4 @@ router.get('/vnpay_return', function (req, res, next) {
         res.status(200).json({ code: '97' });
     }
 });
-
 module.exports = router;
