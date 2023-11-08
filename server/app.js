@@ -23,7 +23,6 @@ app.use(cors({
     origin: true, 
     credentials: true, 
   }));
-app.use(cors());
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
     next();
