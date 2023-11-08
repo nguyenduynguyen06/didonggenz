@@ -66,7 +66,7 @@ function SuggestProduct() {
             {products.filter((product) => product.isHide === false).slice(0, visibleProducts).map((product) => (
                 <div className='box' key={product._id}>
                     <div className='card' onClick={() => handleCardClick(product)} style={{ cursor: 'pointer' }}>
-                        <div className='image' onClick={() => handleCardClick(product)}>
+                        <div className='image' onClick={() => handleCardClick(product)} style={{ display: 'flex', justifyContent: 'center'}}>
                             <img src={product.thumnails[0]} />
                         </div>
                         <div className='desc'>

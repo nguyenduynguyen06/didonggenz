@@ -16,7 +16,7 @@ router.post('/upload', uploadFile.single('image'), async (req, res) => {
     return res.status(500).json({ success: false, error: 'Lỗi trong quá trình tải lên.' });
   }
 });
-router.post('/uploads', uploadFile.array('images', 10), async (req, res) => {
+router.post('/uploads', uploadFile.array('images', 20), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ success: false, error: 'Không có ảnh được tải lên.' });

@@ -8,6 +8,9 @@ const routerProduct = require('./Router/ProductRouter')
 const routerBrand = require('./Router/BrandRouter')
 const routerCart = require('./Router/CartRouter')
 const routerComment = require('./Router/CommentRouter')
+const routerOrder = require('./Router/OrderRouter')
+const routerVoucher = require('./Router/VoucherRouter')
+const routerVNPAY = require('./Router/RouterVNPAY');
 const bodyParser = require('body-parser');
 const path = require('path')
 const routerCategory = require('./Router/CategoryRouter')
@@ -36,10 +39,14 @@ app.use('/api/category',routerCategory);
 app.use('/api/comment',routerComment);
 app.use('/api/brand',routerBrand)
 app.use('/api/cart',routerCart)
-app.use(express.static(path.join(__dirname,'../client/build')))
-app.get('*',(req,res) =>{
-    res.sendFile(path.join(__dirname,'../client/build/index.html'))
-})
+app.use('/api/order',routerOrder)
+app.use('/api/VNPAY', routerVNPAY)
+app.use('/api/voucher',routerVoucher)
+//app.use(express.static(path.join(__dirname,'../client/build')))
+//app.get('*',(req,res) =>{
+ //   res.sendFile(path.join(__dirname,'../client/build/index.html'))
+//})
+
 connect2DB();
 const PORT = process.env.PORT 
 server.listen(PORT, () => {

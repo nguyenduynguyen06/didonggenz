@@ -73,7 +73,7 @@ function Login({ onClose }) {
           });
       }
     } catch (error) {
-      setMessage('Có lỗi xảy ra khi kiểm tra tài khoản');
+      setMessage('Hãy kiểm tra lại email');
     }
   };
   
@@ -98,7 +98,6 @@ function Login({ onClose }) {
       loginHandler(e);  
   }} >
     <MDBContainer fluid>
-
       <MDBRow className='d-flex justify-content-center align-items-center h-100'>
         <MDBCol col='12'>
           <MDBCard className='bg-white my-5 mx-auto' style={{borderRadius: '1rem', maxWidth: '500px'}}>
@@ -121,11 +120,12 @@ function Login({ onClose }) {
                 Login
               </MDBBtn>
               <div className=" text-center"> 
+              <hr className="my-4" />
               <span style={{fontSize: '15px',cursor:'pointer',color:'#FF3300'}} clickable class= "popup" onClick={toggleShow} >
                   Quên mật khẩu?
                 </span>
               </div>
-              <hr className="my-4" />
+              {/*
 
               <MDBBtn className="mb-2 w-100" size="lg" style={{backgroundColor: '#dd4b39'}}>
                 <MDBIcon fab icon="google" className="mx-2"/>
@@ -135,7 +135,7 @@ function Login({ onClose }) {
               <MDBBtn className="mb-4 w-100" size="lg" style={{backgroundColor: '#3b5998'}}>
                 <MDBIcon fab icon="facebook-f" className="mx-2"/>
                 Sign in with facebook
-              </MDBBtn>
+              </MDBBtn> */}
             </MDBCardBody>
           </MDBCard>
 

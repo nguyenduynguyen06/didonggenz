@@ -97,21 +97,53 @@ const updateProductVariant = async (req, res) => {
 const deleteAttributes = async (req, res) => {
   try {
     const variantId = req.params.id;
-    const attributeIdToRemove = req.params.attributeIdToRemove; 
+    const attributeIdToRemove = req.params.attributeIdToRemove;
     const productVariant = await ProductVariant.findById(variantId);
     if (!productVariant) {
       return res.status(404).json({ success: false, error: 'Biến thể không tồn tại' });
     }
-    productVariant.attributes = productVariant.attributes.filter(
-      (attribute) => attribute !== attributeIdToRemove
+    const indexToRemove = productVariant.attributes.findIndex(
+      (attribute) => attribute._id.toString() === attributeIdToRemove
     );
+    if (indexToRemove === -1) {
+      return res.status(404).json({ success: false, error: 'Thuộc tính không tồn tại trong biến thể' });
+    }
+    productVariant.attributes.splice(indexToRemove, 1);
     await productVariant.save();
-
-    res.status(200).json({ success: true, message: 'Xóa thuộc tính khỏi biến thể thành công' });
+    res.status(200).json({ success: true, data: productVariant });
   } catch (error) {
-    res.status(500).json({ success: false, error });
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+const addQuantityToAttribute = async (req, res) => {
+  try {
+    const variantId = req.params.variantId;
+    const attributeId = req.params.attributeId;
+    const quantityToAdd = parseInt(req.body.quantity, 10);
+
+    const productVariant = await ProductVariant.findById(variantId);
+
+    if (!productVariant) {
+      return res.status(404).json({ success: false, error: 'Biến thể không tồn tại' });
+    }
+
+    const attributeToUpdate = productVariant.attributes.find(
+      (attribute) => attribute._id.toString() === attributeId
+    );
+
+    if (!attributeToUpdate) {
+      return res.status(404).json({ success: false, error: 'Thuộc tính không tồn tại trong biến thể' });
+    }
+
+    attributeToUpdate.quantity += quantityToAdd;
+
+    const updatedProductVariant = await productVariant.save();
+
+    res.status(200).json({ success: true, data: updatedProductVariant });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
 
-module.exports = { addProductVariant,deleteProductVariant,updateProductVariant,addAttributes,deleteAttributes };
+module.exports = { addProductVariant,deleteProductVariant,updateProductVariant,addAttributes,deleteAttributes,addQuantityToAttribute };

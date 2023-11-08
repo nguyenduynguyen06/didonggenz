@@ -1,7 +1,9 @@
 import { Row } from "antd";
 import styled from "styled-components";
+import ButtonComponent from "../ButtonComponent/ButtonComponent";
 
 export const WrapperFilterCard = styled.div`
+zoom: 1;
 *{
   margin: 0;
   padding: 0;
@@ -16,57 +18,80 @@ export const WrapperFilterCard = styled.div`
 .mainContainer {
   width:100%;
   background: #fff;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
-  align-items: center;
-  justify-content: space-around; 
-  row-gap: 20px;
-  padding: 20px;
+  display:grid;
+  grid-auto-rows: minmax(min-content,max-content);
+  grid-template-columns: repeat(6,minmax(0,1fr));
+  overflow: hidden;
+  border-radius: 0 0 8px 8px;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
 }
-
-.mainContainer .box {
+.item-label span {
+  border-radius: 2px;
+  font-size: 11px;
+  line-height: 12px;
+  display: inline-block;
+  margin-right: 4px;
+  padding: 3px;
+  text-align: left;
+}
+.box {
   background: #fff;
-  text-align: center;
+  text-align: left;
+  justify-content: start;
   transition: .3s ease-in-out;
-  max-width: 100%;
-  width: auto;
+  border: 1px solid #efefef;
+  height: 100%;
+  border-radius: 4px;
+  border-bottom: 1px solid #f3f3f3 !important;
+  border-right: 1px solid #f3f3f3 !important;
+  align-content: start;
 }
-
+.box:hover{
+  transform: scale(1);
+  z-index:1;
+}
+.lb-dis {
+  background-color: #f1f1f1;
+  color: #ff3300;
+  font-weight:400;
+}
 .mainContainer .box:hover {
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
 }
 
 .mainContainer .card {
-  // padding: 15px 15px 0;
+  padding: 10px 15px 20px;
+  overflow: hidden;
   width: 100%;
-}
+  height: 100%;
 
-.card .image {
+}
+.card{
+  align-content: start;
+}
+.image {
   width:100%;
-  backgroud: #f9f9f9;
   margin: 20px auto;
   position: relative;
+  margin-bottom: 10px;
+  display: block;
+  margin-top: 10px;  
+  height: 250px;
+  line-height: 250px;
 }
-
-// .card .image::before {
-//   content: "";
-//   position: absolute;
-//   width: 10px;
-//   height: 10px;
-//   botton: 8px;
-//   left: 10px;
-//   border-radius: 50%;
-//   background-color: red;
-// }
-
-.card .image:hover img {
+.card .image:hover img{
   transform: scale(1.1);
+  z-index:1;
 }
-
-.card .image img {
-  width:180px;
-  transition: .3s ease-in-out;
-  cursor: pointer;
+.card .image img{
+  width:100%;
+  margin-top: 8px;
+  transition: all .3s ease-in-out;
+  max-width: 100%;
 }
 .memory-button.selected {
   border: 1px solid #00BFFF	; 
@@ -74,17 +99,26 @@ export const WrapperFilterCard = styled.div`
 .card .desc {
   width: 100%;
   margin: auto;
-  line-height: 3;
-  height: 14em;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal
+  white-space: normal;
+  align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-content: start;
 }
 
 .card .desc h1 {
-  font-size: 15px;
   text-transform: uppercase;
-
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 14px;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+  text-align: left;
 }
 
 .card .desc p {
@@ -183,20 +217,19 @@ export const WrapperCard = styled.div`
   .mainContainer {
     width:100%;
     background: #fff;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1rem));
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-around; 
-    row-gap: 20px;
+    overflow: hidden;
     padding: 20px;
+    gap: 2px;
   }
 
   .mainContainer .box {
     background: #fff;
     text-align: center;
     transition: .3s ease-in-out;
-    max-width: 100%;
-    width: auto;
+    width: 200px;
   }
 
   .mainContainer .box:hover {
@@ -242,7 +275,7 @@ export const WrapperCard = styled.div`
     width: 100%;
     margin: auto;
     line-height: 3;
-    height: 11em;
+    height: 15em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal
@@ -334,4 +367,90 @@ export const WrapperCard = styled.div`
     border:none
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   }
+`
+export const WrapperSuggestCard = styled.div`
+.view-list{
+  background-color: #fff;
+  border: 1px solid rgba(145,158,171,.239);
+  border-radius: 10px;
+  padding: 5px 15px 0;
+  width: 100%;
+}
+.view-list__wrapper{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.item{
+  border-bottom: 0 solid rgba(145,158,171,.24);
+  display: flex;
+  gap: 15px;
+  overflow: hidden;
+  padding: 12px 0;
+  transition: .2s ease-in-out;
+  width: 100%;
+}
+.item__img{
+  height: 100px;
+  width: 100px;
+  flex-shrink: 0;
+}
+img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.item-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+}
+.item-name {
+  color: #111;
+  font-size: 16px;
+  font-weight: 500;
+}
+.item-price {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: space-between;
+}
+.box-info__box-price {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.product__price--show {
+  color: #d70018;
+  display: inline-block;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1;
+}
+.product__price--through {
+  color: #707070;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  -webkit-text-decoration: line-through;
+  text-decoration: line-through;
+  top: 2px;
+}
+`
+export const WrapperButtonMore = styled(ButtonComponent)`
+  &:hover {
+    color:#fff;
+    background: #ff3300
+    span {
+      color: #fff;
+    }
+  }
+  width: 100%;
+  text-align: center;
 `

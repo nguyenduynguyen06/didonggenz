@@ -64,11 +64,7 @@ function Register() {
   }
   return (
     <form className="form-add-new" onSubmit={signupHandler} >
-    <MDBContainer fluid>
-
-      <div className="p-5 bg-image" style={{backgroundImage: 'url(https://img.freepik.com/premium-vector/happy-new-year-merry-christmas-horizontal-greeting_68196-4482.jpg?w=1800)', height: '300px'}}></div>
-
-      <MDBCard className='mx-5 mb-5 p-5 shadow-5' style={{marginTop: '-100px', background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)'}}>
+      <MDBCard className='mx-5 mb-5 p-5 shadow-5' style={{ background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)'}}>
         <MDBCardBody className='p-5 text-center'>
         {message && (
         <h2>
@@ -87,7 +83,7 @@ function Register() {
               <MDBInput wrapperClass='mb-4' label='Họ và tên' name="fullName" value={user.fullName} onChange={onChange} type='text' tabIndex="1"/>
             </MDBCol>
             <MDBCol col='6'>
-              <MDBInput wrapperClass='mb-4' label='Địa chỉ' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2"/>
+              <MDBInput wrapperClass='mb-4' label='Địa chỉ cụ thể' name="addRess" value={user.addRess} onChange={onChange} type='text' tabIndex="2"/>
             </MDBCol>
           </MDBRow>
           <MDBInput wrapperClass='mb-4' label='Số điện thoại' name="phone_number" value={user.phone_number} onChange={onChange} type='text' tabIndex="3"/>
@@ -101,7 +97,6 @@ function Register() {
         </MDBCardBody>
       </MDBCard>
 
-    </MDBContainer>
     </form>
   );
 }

@@ -28,20 +28,12 @@ function CartHeader({ product, removeFromCart }) {
       <div className="header-wrapper">
         <div className='header-container'>
           <div className='cart-page-header'>
-            <a className='cart-page-logo' href='/'>
+            <a className='cart-page-logo' href='#'>
               <div viewBox="0 0 192 65" className='logo-icon'>
                 <img src='../../image/didong2.png' />
               </div>
               <div className='cart-page-name'>Giỏ hàng</div>
             </a>
-          </div>
-          <div className='cart-page-searchbar'>
-            <Search className='search-bar'
-              style={{ width: '50%' }}
-              placeholder="Tìm kiếm sản phẩm"
-              onSearch={handleSearch}
-              enterButton
-            />
           </div>
         </div>
       </div>

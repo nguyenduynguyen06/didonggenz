@@ -8,6 +8,9 @@ import axios from 'axios';
 
 const UpdateUser = () => {
   const user = useSelector((state) => state.user);
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
   const [user1, setUser1] = useState({
     fullName: user.fullName || "",
     addRess: user.addRess || "",
@@ -41,7 +44,7 @@ const UpdateUser = () => {
       await axios.post(
         `${process.env.REACT_APP_API_URL}/user/update/${user._id}`,
         updatedData,
-        { withCredentials: true }
+        { headers }
       );
 
       window.location.reload();
@@ -67,7 +70,7 @@ const UpdateUser = () => {
               name="birthDay"
               value={user1.birthDay}
               onChange={(date) => onChange("birthDay", date)}
-              suffixIcon={<span>Ngày sinh</span>}
+              placeholder="Ngày sinh"
             />
             </MDBCol>
           </MDBRow>

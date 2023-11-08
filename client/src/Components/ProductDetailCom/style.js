@@ -11,7 +11,7 @@ justify-contents: center;
         display: block;
         object-fit: contain;
         max-width: 100%;
-        max-height: 400px;
+        height: 400px;
     }
     .slider-image img{
         width: auto;
@@ -38,7 +38,7 @@ export const WrapperStyleTextSell = styled.div`
     p {
     padding: 20px 0 0 0;
     font-size: 15px;
-    line-height: 24px;
+    line-height: 0px;
     color: rgb(120, 120, 120);
     }
 `
@@ -296,6 +296,7 @@ export const WrapperCommentNew = styled.div`
         text-transform: capitalize;
         width: 25px;
     }
+
     .box-inf .box-inf-name {
         font-size: 14px;
         font-weight: 700;
@@ -487,12 +488,16 @@ width: 100%;
     }
     .boxReview-comment {
         margin: 30px 0 15px;
-    width: 100%;
+        width: 100%;
     }
     .boxReview-comment-item {
         border-bottom: 1px solid rgba(145,158,171,.239);
         margin-bottom: 15px;
         padding-bottom: 15px;
+    }
+    .avt img{
+        width: 60px;
+        height: 60px;
     }
     .block-info__name{
         align-items: center;

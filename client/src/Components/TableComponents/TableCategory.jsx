@@ -4,10 +4,15 @@ import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { UploadOutlined,DeleteOutlined } from '@ant-design/icons';
 import Search from "antd/es/input/Search";
+import { useSelector } from "react-redux";
 
 
 
 const TableCategory = () => {
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
     const [categoryData, setcategoryData] = useState([]); 
     const [isDeleteCategory, setDeleteCategory] = useState(false); 
     const [currentCategoryId, setCurrentCategoryId] = useState(null);
@@ -112,7 +117,7 @@ const TableCategory = () => {
     const handleSwitchChange = (checked, categoryId) => {
         const newIsHide = !checked; 
         axios
-          .put(`${process.env.REACT_APP_API_URL}/category/updateCategory/${categoryId}`, { isHide: newIsHide })
+          .put(`${process.env.REACT_APP_API_URL}/category/updateCategory/${categoryId}`, { isHide: newIsHide },{ headers })
           .then((response) => {
             const updatedData = categoryData.map((item) =>
               item._id === categoryId ? { ...item, isHide: newIsHide } : item
@@ -125,7 +130,7 @@ const TableCategory = () => {
       };
       const handleDeleteCategory = (categoryId) => {
         axios
-          .delete(`${process.env.REACT_APP_API_URL}/category/delete/${categoryId}`)
+          .delete(`${process.env.REACT_APP_API_URL}/category/delete/${categoryId}`,{ headers })
           .then((response) => {
             if (response.data.success) {
               const updatedData = categoryData.filter((item) => item._id !== categoryId);

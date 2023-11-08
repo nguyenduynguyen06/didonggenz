@@ -8,6 +8,7 @@ import {
   Select
 } from 'antd';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 const {Option} = Select
 const formItemLayout = {
   labelCol: {
@@ -41,6 +42,10 @@ const tailFormItemLayout = {
 };
 
 const NewBrand = () => {
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
   const [form] = Form.useForm();
   const props = {
     name: 'image',
@@ -82,7 +87,7 @@ const NewBrand = () => {
   }, []);
   const onFinish = async (values) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/brand/addBrand`, values);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/brand/addBrand`, values,{ headers });
       if (response.data.success) {
         message.success('Thêm thương hiệu thành công');
         form.resetFields();

@@ -51,7 +51,7 @@ const ListBrand = () => {
                        <NavLink
                        key={brand.name}
                        className={`list-brand-item ${nameBrand === brand.name ? 'bordered' : ''}`}
-                       to={`/type/${nameCategory}/${brand.name}`}
+                       to={`/lowtoHigh/${nameCategory}/${brand.name}`}
                      >
                        <img className="brand-img" src={brand.picture} alt={brand.name} />
                      </NavLink>

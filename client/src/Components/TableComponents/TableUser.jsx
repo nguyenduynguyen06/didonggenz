@@ -101,9 +101,12 @@ const TableUser = () => {
             });
     };
     const handleToggleBlocked = (userId, checked) => {
+        const headers = {
+            token: `Bearers ${user.access_token}`,
+        };
         axios.post(`${process.env.REACT_APP_API_URL}/user/update/${userId}`, {
             isBlocked: checked     
-        }, {withCredentials: true})
+        }, {headers })
             .then((response) => {
                 const updatedUser = {
                     ...users.find(user => user._id === userId),

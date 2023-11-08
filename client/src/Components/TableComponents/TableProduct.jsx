@@ -18,9 +18,14 @@ import {
   Image,
   List 
 } from 'antd';
+import { useSelector } from "react-redux";
 
 
 const TableProduct = () => {
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
   const props = (fieldKey) => ({
     name: 'image',
     action: `${process.env.REACT_APP_API_URL}/upload`,
@@ -89,6 +94,7 @@ onChange(info) {
   const [form] = Form.useForm();
   const [currentProductId, setCurrentProductId] = useState(null);
   const [currentProductvariantId, setCurrentProducvarianttId] = useState(null);
+  const [currentAttributeId, setCurrentAttributeId] = useState(null);
   const columns = [
     {
       title: 'Tên sản phẩm',
@@ -102,11 +108,6 @@ onChange(info) {
       title: 'Thương hiệu',
       dataIndex: 'brand',
       render: brand => brand.name,
-    },
-    {
-      title: 'Danh mục',
-      dataIndex: 'category',
-      render: category => category.name,
     },
     {
       title: "Hình ảnh hiển thị",
@@ -439,24 +440,28 @@ const [attributeModalVisible, setAttributeModalVisible] = useState(false);
 const [selectedVariant, setSelectedVariant] = useState(null);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isDeleteVariantVisible, setDeleteVariantVisible] = useState(false);
+  const [isDeleteAttributeVisible, setDeleteAttributeVisible] = useState(false);
   const [isUpdate, setUpdate] = useState(false);
   const [isAddVariant, setAddVariant] = useState(false);
   const [productData, setProductData] = useState([]);
-  useEffect(() => {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const handleCategoryClick = (categoryId) => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/product/getAll`)
-      .then((response) => {
-        setProductData(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Lỗi khi gọi API: ', error);
-      });
-  }, []);
+    .get(`${process.env.REACT_APP_API_URL}/product/getIdByCategory/${categoryId}`)
+            .then((response) => {
+              setSelectedCategory(categoryId);
+              setProductData(response.data.data);
+            })
+            .catch((error) => {
+              console.error('Lỗi khi gọi API: ', error);
+            });
+        };
   const addProductVariant = async (parentId, variantData) => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/product/addProductvariant/${parentId}`,
-        variantData
+        variantData, { headers }
       );
       
       const updatedProductData = productData.map((product) => {
@@ -476,7 +481,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/product/addAttributes/${variantId}`,
-        { attributes: attributesData }
+        { attributes: attributesData },{ headers }
       );
       const updatedProductData = productData.map((product) => {
         if (product.variant.some((variant) => variant._id === variantId)) {
@@ -510,7 +515,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   };
   const updateProductVariant = async (variantId, newData) => {
     axios.put( `${process.env.REACT_APP_API_URL}/product/editProductVariant/${variantId}`,
-    newData)
+    newData,{ headers })
       .then((response) => {
         axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
       .then((response) => {
@@ -524,13 +529,9 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         console.error("Lỗi khi cập nhật biến thể: ", error);
       });
   };
-  
-  
-  
-  
   const handleSaveEdit = (id, values) => {
     const productId = id;
-    axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values)
+    axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, values,{ headers })
       .then((response) => {
         axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
       .then((response) => {
@@ -547,7 +548,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   
   const handleDeleteProduct = (productId) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/product/delete/${productId}`)
+      .delete(`${process.env.REACT_APP_API_URL}/product/delete/${productId}`,{ headers })
       .then((response) => {
         const updatedProducts = productData.filter(product => product._id !== productId);
         message.success('Xoá sản phẩm thành công')
@@ -559,7 +560,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   };
   const handleDeleteProductvariant = (variantId) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/product/deleteVariant/${variantId}`)
+      .delete(`${process.env.REACT_APP_API_URL}/product/deleteVariant/${variantId}`,{ headers })
       .then((response) => {
         const updatedProductData = productData.map((product) => {
           const updatedVariants = product.variant.filter(
@@ -587,7 +588,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   const handleToggleHide = (productId, checked) => {
     axios.put(`${process.env.REACT_APP_API_URL}/product/editProduct/${productId}`, {
         isHide: checked, 
-      })
+      },{ headers })
       .then((response) => {     
         const updatedProduct = {
           ...productData.find(product => product._id === productId),
@@ -596,22 +597,17 @@ const [selectedVariant, setSelectedVariant] = useState(null);
         const updatedProducts = productData.map(product =>
           product._id === productId ? updatedProduct : product
         );
-        console.log('checked',checked)
         setProductData(updatedProducts);
       })
       .catch((error) => {
         console.error('Lỗi khi cập nhật sản phẩm: ', error);
       });
   };
-  
-  const showAttributesModal = (variant) => {
-    setSelectedVariant(variant);
-    setAttributeModalVisible(true);
-  };
   const [isAddAttributes, setAddAttributes] = useState(false);
   const [isUpdateVariant, setUpdateVariant] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [addQuantityAttributes, setaddQuantityAttribute] = useState(false);
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
@@ -628,8 +624,87 @@ const [selectedVariant, setSelectedVariant] = useState(null);
       setSearchResults([]);
     }
   }, [searchQuery]);
+  const handleDeleteAttribute = (variantId, attributeId) => {
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/product/deleteAttributes/${variantId}/${attributeId}`,{ headers })
+      .then((response) => {
+        const updatedSelectedVariant = {
+          ...selectedVariant,
+          attributes: selectedVariant.attributes.filter(
+            (attribute) => attribute._id.toString() !== attributeId.toString()
+          ),
+        };
+        setSelectedVariant(updatedSelectedVariant);
+  
+        const updatedSelectedProduct = {
+          ...selectedProduct,
+          variant: selectedProduct.variant.map((variant) => {
+            if (variant._id === variantId) {
+              return {
+                ...variant,
+                attributes: variant.attributes.filter(
+                  (attribute) => attribute._id.toString() !== attributeId.toString()
+                ),
+              };
+            }
+            return variant;
+          }),
+        };
+        setSelectedProduct(updatedSelectedProduct);
+        axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
+      .then((response) => {
+        setProductData(response.data.data);
+      })
+        message.success('Xoá thuộc tính thành công')
+      })
+      .catch((error) => {
+        console.error('Lỗi khi xóa mục giỏ hàng:', error);
+      });
+  };
+  const addQuantityAttribute = async (variantId, attributeId, newData) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/product/addQuantity/${variantId}/${attributeId}`,
+        newData,{ headers }
+      );
+      axios.get(`${process.env.REACT_APP_API_URL}/product/getAll`)
+      .then((response) => {
+        setProductData(response.data.data);
+      })
+      if (response.status === 200) {
+        message.success('Cộng thêm số lượng thành công')
+        form.resetFields();
+        setaddQuantityAttribute(false);
+      } else {
+        console.error('Lỗi khi cập nhật biến thể:', response.data.error);
+      }
+    } catch (error) {
+      console.error('Lỗi khi cập nhật biến thể:', error);
+    }
+  };
+  const [category, setCategory] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
+      .then((response) => {
+          setCategory(response.data.data); 
+          if (isFirstLoad && response.data.data.length > 0) {
+            handleCategoryClick(response.data.data[0]._id);
+            setIsFirstLoad(false);
+          }
+      })
+      .catch((error) => {
+        console.error('Lỗi khi gọi API: ', error);
+      });
+  }, []);
   return (
     <div>
+      <Alert
+        message="Tìm kiếm từ tất cả sản phẩm"
+        type="info"
+        showIcon
+      />
+      <br/>
          <div>
         <Search
           style={{ width: '50%' }}
@@ -637,6 +712,19 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           onSearch={handleSearch}
           enterButton
         />
+      </div>
+      <br/>
+      <div>
+        {category.map((category) => (
+          <Button
+            key={category._id}
+            style={{ marginRight: '10px' }}
+            onClick={() => handleCategoryClick(category._id)}
+            className={`memory-button ${selectedCategory === category._id ? 'selected' : ''}`}
+          >
+            {category.name}
+          </Button>
+        ))}
       </div>
       <div
         style={{
@@ -699,7 +787,11 @@ const [selectedVariant, setSelectedVariant] = useState(null);
           title: 'Thuộc tính',
           render: (text, record) => (
             <Space size="middle">
-              <a onClick={() => showAttributesModal(record)}><AppstoreOutlined/> </a>
+               <a
+            onClick={() => {
+              setSelectedVariant(record);
+              setAttributeModalVisible(true);
+            }}><AppstoreOutlined/> </a>
             </Space>
           ),
         },
@@ -928,6 +1020,7 @@ const [selectedVariant, setSelectedVariant] = useState(null);
   footer={null}
   width={800}
 >
+  
   {selectedVariant && (
     <Table
       dataSource={selectedVariant.attributes}
@@ -966,6 +1059,70 @@ const [selectedVariant, setSelectedVariant] = useState(null);
             </div>
           ),
         },
+        {
+          title: 'Thao tác',
+          render: (text, record) => (
+            <Space size="middle">
+              <a onClick={() => { setDeleteAttributeVisible(true); setCurrentAttributeId(record._id) }}>
+                <DeleteOutlined />
+              </a>
+              <a onClick={() => { setaddQuantityAttribute(true); setCurrentAttributeId(record._id) }}>
+                <PlusOutlined />
+              </a>
+              <Modal
+                title="Xác nhận xoá thuộc tính"
+                visible={isDeleteAttributeVisible}
+                onOk={() => {
+                 handleDeleteAttribute(selectedVariant._id,currentAttributeId);
+                 setDeleteAttributeVisible(false);
+                }}
+                onCancel={() => setDeleteAttributeVisible(false)}
+              >
+                <p>Bạn có chắc chắn muốn xoá thuộc tính này?</p>
+              </Modal>
+              <Modal
+                  title="Cộng thêm số lượng"
+                  visible={addQuantityAttributes}
+                  onOk={() => {
+                    form
+                      .validateFields()
+                      .then((values) => {
+                        addQuantityAttribute(selectedVariant._id,currentAttributeId, values);
+                        setaddQuantityAttribute(false);
+                      })
+                      .catch((errorInfo) => {
+                        console.error('Validation failed:', errorInfo);
+                      });
+                  }}
+                  onCancel={() => {
+                    setaddQuantityAttribute(false);
+                  }}
+                >
+                    <Alert
+                    message="Lưu ý: Điền số lượng vào sẽ cộng thêm với số lượng đã có trước đó, chỉ cần tắt tất cả form rồi mở lại sẽ được cập nhật lại số lượng"
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: '16px',background:'#FFFF99' }}
+                  />
+                  <Form
+                    {...formItemLayout}
+                    form={form}
+                    style={{
+                      maxWidth: 600,
+                    }}
+                    scrollToFirstError
+                  >
+                    <Form.Item
+                      name="quantity"
+                      label="Số lượng cộng thêm"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Form>
+                </Modal>  
+            </Space>
+          )
+        }
       ]}
     />
   )}

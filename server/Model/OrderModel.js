@@ -1,61 +1,117 @@
 const mongoose = require('mongoose');
-
-const orderSchema = new mongoose.Schema({
-  numericId: {
+const moment = require("moment-timezone");
+const cartItemSchema  = new mongoose.Schema({
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
+  productVariant: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ProductVariant',
+    required: true,
+  },
+  quantity: {
     type: Number,
-    require: true,
+    required: true,
+    default: 1,
+  },
+  color: {
+    type: String,
+  },
+  memory: {
+    type: String,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  pictures: {
+    type: String,
+  },
+  subtotal: {
+    type: Number,
+    required: true,
+  },
+  rated:{
+    type: Boolean,
+    default: false
+  },
+  change:{
+    isHave:{
+      type:Boolean,
+      default: false
+    },
+    dateChange:{
+      type:String
+    }
+  }
+});
+const orderSchema = new mongoose.Schema({
+  orderCode: {
+    type: String,
+    required: true,
+    unique: true
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
+    ref: 'User',
+    required: true,
+  },
+  items: [cartItemSchema],
+  userName: {
+    type: String,
+    required: true,
+  },
+  userEmail: {
+    type: String,
+    required: true,
+  },
+  userPhone: {
+    type: String,
+    required: true,
   },
   address: {
     type: String,
-    require: true,
+    required: true,
   },
-  atStore: {
-    type: Boolean,
+  shippingMethod: {
+    type: String,
     default: false,
   },
   status: {
     type: String,
-    require: true,
+    required: true,
   },
   paymentMethod: {
     type: String,
-    require: true,
+    required: true,
   },
-  items: [
-    {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product', 
-      },
-      quantity: {
-        type: Number,
-        require: true,
-      },
-      price: {
-        type: Number,
-        require: true,
-      },
-    },
-  ],
   subTotal: {
     type: Number,
-    require: true,
+    required: true,
   },
   shippingFee: {
     type: Number,
-    require: true,
+    required: true,
   },
   totalPay: {
     type: Number,
-    require: true,
+    required: true,
+  },
+  voucher: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Voucher'
   },
   createDate: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    default: () =>
+      moment()
+        .tz("Asia/Ho_Chi_Minh")
+        .format("DD/MM/YYYY HH:mm:ss"),
+  },
+  completeDate: {
+    type: String,
   },
 });
 

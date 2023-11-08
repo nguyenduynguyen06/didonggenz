@@ -67,7 +67,7 @@ const onChange1 = event => {
   const addComment = event => {   
     event.preventDefault();
     if (comment.author.trim() !== '' && comment.content.trim() !== '') {
-      axios.post(`${process.env.REACT_APP_API_URL}/comment/addComment/${productName}/${user._id}`, comment)
+      axios.post(`${process.env.REACT_APP_API_URL}/comment/addComment/${productName}?userId=${user._id || ''}`, comment)
         .then((res) => {
           toggleModal();
           setComment({
@@ -83,7 +83,7 @@ const onChange1 = event => {
   const addReply = (event, commentId) => {   
     event.preventDefault();
     if (reply.author.trim() !== '' && reply.content.trim() !== '') {
-      axios.post(`${process.env.REACT_APP_API_URL}/comment/addReply/${commentId}/${user._id}/${productName}`, reply)
+      axios.post(`${process.env.REACT_APP_API_URL}/comment/addReply/${commentId}/${productName}?userId=${user._id || ''}`, reply)
         .then((res) => {
           toggleModal();
           setReply({
@@ -177,12 +177,12 @@ const onChange1 = event => {
                 <div className='cmt-inf'>
                   <div className='box-inf'>
                     <div className='box-inf-avt'>
-                      {comments.user.avatar ? (
-                      <img src={comments.user.avatar} style={{width:"40px"}}/>  
-                      ):  <img src='../../image/logo.png' style={{width:"40px"}}/>  }
+                      {comments?.user?.avatar ? (
+                      <img src={comments.user.avatar} style={{width:"30px"}}/>  
+                      ):  <img src='../../image/logo.png' style={{width:"30px"}}/>  }
                       &nbsp;
                     </div>
-                    <div className='box-inf-name'>{comments.author} {comments.user && comments.user.role_id === 1 ? ' (QTV)' : ''}</div>
+                    <div className='box-inf-name'>{comments.author} {comments?.user && comments.user?.role_id === 1 ? ' (QTV)' : ''}</div>
                   </div>
                 </div>
                 <div className='cmt-quest'>
@@ -224,20 +224,20 @@ const onChange1 = event => {
                     </form>
                   )}
                 </div>
-                <div className='cmt-rep'>
+                <div className='cmt-rep' >
                   <div className='list-cmt-rep'>
                   {comments.replies.map((reply, replyIndex) => (
-                    <div className='item-cmt-rep'>
+                    <div className='item-cmt-rep' style={{marginTop: 8}}>
                       <div className='box-inf'>
                       <div className='box-inf-avt'>
-                          {reply.user.avatar ? (
-                          <img src={reply.user.avatar} style={{width:"40px"}}/>  
-                          ):  <img src='../../image/logo.png' style={{width:"40px"}}/>  }
+                          {reply?.user?.avatar ? (
+                          <img src={reply?.user?.avatar} style={{width:"30px"}}/>  
+                          ):  <img src='../../image/logo.png' style={{width:"30px"}}/>  }
                           &nbsp;
                         </div>
-                        <div className='box-inf-name'>{reply.author} {reply.user && reply.user.role_id === 1 ? ' (QTV)' : ''}</div>
+                        <div className='box-inf-name'>{reply.author} {reply?.user && reply?.user?.role_id === 1 ? ' (QTV)' : ''}</div>
                       </div>
-                      <div className='cmt-quest'>
+                      <div className='cmt-quest' style={{marginTop: 8}}>
                         <div className='content'>
                           <p>{reply.content}</p>
                         </div>        

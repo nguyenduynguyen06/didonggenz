@@ -4,11 +4,15 @@ const User = require('../Model/UserModel');
 
 const addComment = async (req, res) => {
     try {
-      const { productName,userId } = req.params;
+      const { productName } = req.params;
+      const { userId } = req.query
       const product = await Product.findOne({ name: productName });
       const { author, content } = req.body;
-      let user
-      user = await User.findOne({ _id: userId });
+      let user = null;
+
+        if (userId) {
+          user = await User.findOne({ _id: userId });
+        }
       const comment = new Comment({
         product: product._id,
         user: user ? user._id : null,
@@ -29,10 +33,10 @@ const addReply = async (req, res) => {
     try {
       const {  author, content } = req.body;
       const commentId = req.params.commentId;
-      const userId  = req.params.userId
+      const userId  = req.query.userId
       const productName  = req.params.productName
       const product = await Product.findOne({ name: productName });
-      let user;
+      let user = null;
       
       if (userId) {
         user = await User.findOne({ _id: userId });
@@ -65,10 +69,10 @@ const addReply = async (req, res) => {
     try {
       const {  author, content } = req.body;
       const commentId = req.params.commentId;
-      const userId  = req.params.userId
+      const userId  = req.query.userId
       const productName  = req.params.productName
       const product = await Product.findOne({ name: productName });
-      let user;
+      let user = null;
       
       if (userId) {
         user = await User.findOne({ _id: userId });

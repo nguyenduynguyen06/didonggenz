@@ -42,7 +42,7 @@ const Category = () => {
             key={category._id}
             style={{ ...gridStyle, height: '100px',backgroundImage: 'linear-gradient(to right, #94b9ff,  #cdffd8)' }}
             >
-            <NavLink to={`/type/${category.name}`}>
+            <NavLink to={`/lowtoHigh/${category.name}`}>
             <img src={category.picture} className='img-fluid rounded' alt='' />
             <p>{category.name}</p>
             </NavLink>

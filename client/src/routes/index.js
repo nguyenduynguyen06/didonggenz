@@ -2,20 +2,20 @@ import AdminHomePage from "../pages/Admin/AdminPage";
 import HomePage from "../pages/HomePage/homepages";
 import Profilepage from "../pages/Profile/profilepage";
 import NotFoundPage from "../pages/notfoundpage";
-import OrderPage from "../pages/oders";
 import ProductDetail from "../pages/ProductDetail/productdetail";
-import TypeProductPage from "../pages/ProductTypePage/producttypepage";
 import CartPage from "../pages/CartPage/CartPage";
 import FilterProductPage from "../pages/ProductTypePage/productfilterpage";
+import PaymentInfo from "../pages/PaymentPage/paymentinfo";
+import OrderSuccess from "../pages/ordersuccess";
+import PaymentSuccess from "../pages/paymentVNPAYsuccess";
+import Orders from "../pages/Profile/order/orders";
+import OrderDetail from "../pages/Profile/orderdetail";
+
+
 export const routes = [
     {
         path:'/',
         page: HomePage,
-    },
-    {
-        path:'/order',
-        page: OrderPage,
-        isShowHeader : true
     },
     {
         path:'*',
@@ -36,18 +36,6 @@ export const routes = [
         isShowHeader: true
     },
     {
-        path:'/type/:nameCategory',
-        page: TypeProductPage,
-    },
-    {
-        path:'/type/:nameCategory/:nameBrand',
-        page: TypeProductPage,
-    },
-    {
-        path:'/type',
-        page: TypeProductPage,
-    },
-    {
         path:'/product/:productName/:memory',
         page: ProductDetail,
         isShowHeader: true
@@ -56,6 +44,10 @@ export const routes = [
         path:'/cart',
         page: CartPage,
         isShowHeader: true
+    },
+    {
+        path:'/lowtoHigh',
+        page: FilterProductPage,
     },
     {
         path:'/lowtoHigh/:nameCategory/:nameBrand',
@@ -73,4 +65,28 @@ export const routes = [
         path:'/highToLow/:nameCategory',
         page: FilterProductPage,
     },
+    {
+        path:'/highToLow',
+        page: FilterProductPage,
+    },
+    {
+        path:'/payment-infor',
+        page: PaymentInfo
+    },
+    {
+        path:'/order-success',
+        page: OrderSuccess,
+    },
+    {
+        path:'/vnpay_return',
+        page: PaymentSuccess,
+    },
+    {
+        path:'/orders',
+        page: Orders    
+    },
+    {
+        path:'/order-detail/:orderCode',
+        page: OrderDetail
+    }
 ]

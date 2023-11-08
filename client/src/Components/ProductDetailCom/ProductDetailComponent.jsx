@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate } from 'antd'
+import { Button, Col, Image, Row, Table, Rate, message } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
@@ -14,13 +14,13 @@ import {
     WrapperDetail,
     WrapperPolicy,
 } from "./style"
-import { PlusOutlined, MinusOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined,GiftOutlined } from '@ant-design/icons'
+import { PlusOutlined, MinusOutlined, RetweetOutlined, PropertySafetyOutlined, DropboxOutlined, GiftOutlined } from '@ant-design/icons'
 import ButtonComponent from "../ButtonComponent/ButtonComponent"
 import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { NavLink, useParams } from "react-router-dom"
-import './button.css'
+
 import Slider from 'react-slick';
 
 import 'slick-carousel/slick/slick.css';
@@ -28,34 +28,46 @@ import 'slick-carousel/slick/slick-theme.css';
 import Rating from "./ratecomponent"
 import SuggestProduct from "./suggestproductcomponent"
 import ProductSale from "./productsale"
+import { useSelector } from "react-redux"
+import { CommentsDisabledOutlined } from "@mui/icons-material"
 
 
 const { Column, ColumnGroup } = Table;
 
 const ProductDetailComponents = () => {
-
+    const user = useSelector((state) => state.user)
     const [productDetails, setProductDetails] = useState(null);
     const { productName, memory } = useParams();
-    const [selectedColor, setSelectedColor] = useState({});
+    const [selectedColor, setSelectedColor] = useState('');
     const [selectedSold, setSelectedSold] = useState({});
     const [selectedMemories, setSelectedMemories] = useState({});
+    const [selectedSKU, setSelectedSKU] = useState({});
+    const [selectedQuantity, setSelectedQuantity] = useState({});
     const sliderSettings = {
         dots: true,
         infinite: true,
-        speed: 500,
+        speed: 400,
         slidesToShow: 1,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 2000,
+        autoplaySpeed: 1200,
         appendDots: (dots) => (
             <ul style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', listStyle: 'none', padding: '0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {dots}
             </ul>)
     };
+    const addToCart = async (userId, productName, SKU, quantity) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/cart/addCart?userId=${userId}&productName=${productName}&SKU=${SKU}&quantity=${quantity}`)
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    };
 
     useEffect(() => {
         if (memory !== `undefined`) {
-            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
+            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}`)
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
@@ -77,13 +89,19 @@ const ProductDetailComponents = () => {
                                     ...prevSelected,
                                     [variant._id]: defaultColor,
                                 }));
-
-
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
                                     setSelectedSold((prevSelected) => ({
                                         ...prevSelected,
                                         [variant._id]: selectedAttribute.sold,
+                                    }));
+                                    setSelectedSKU((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.sku,
+                                    }));
+                                    setSelectedQuantity((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.quantity,
                                     }));
                                 }
                             }
@@ -94,7 +112,7 @@ const ProductDetailComponents = () => {
                     console.error('Error fetching product details:', error);
                 });
         } else {
-            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}/${memory}`)
+            axios.get(`${process.env.REACT_APP_API_URL}/product/getDetails/${productName}`)
                 .then((response) => {
                     const productDetails = response.data.data;
                     setProductDetails(productDetails);
@@ -102,10 +120,7 @@ const ProductDetailComponents = () => {
                     const initialMemories = {
                         [productDetails._id]: productDetails.variant[0].memory
                     };
-
                     setSelectedMemories(initialMemories);
-
-
                     if (productDetails && productDetails.variant) {
                         productDetails.variant.forEach((variant) => {
                             if (variant.memory === productDetails.variant[0].memory && variant.attributes && variant.attributes.length > 0) {
@@ -114,13 +129,19 @@ const ProductDetailComponents = () => {
                                     ...prevSelected,
                                     [variant._id]: defaultColor,
                                 }));
-
-
                                 const selectedAttribute = variant.attributes.find((attribute) => attribute.color === defaultColor);
                                 if (selectedAttribute) {
                                     setSelectedSold((prevSelected) => ({
                                         ...prevSelected,
                                         [variant._id]: selectedAttribute.sold,
+                                    }));
+                                    setSelectedSKU((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.sku,
+                                    }));
+                                    setSelectedQuantity((prevSelected) => ({
+                                        ...prevSelected,
+                                        [variant._id]: selectedAttribute.quantity,
                                     }));
                                 }
                             }
@@ -132,10 +153,61 @@ const ProductDetailComponents = () => {
                 });
         }
     }, [productName, memory]);
+    const handleAddToCart = async () => {
+        try {
+            if (memory !== 'undefined') {
+                const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
+                if (selectedVariant) {
+                    const selectedSKUName = selectedSKU[selectedVariant._id]
+                    await addToCart(user._id, productName, selectedSKUName, quantity);
+                    message.success('Thêm vào giỏ hàng thành công')
+
+                }
+            } else {
+                const selectValues = Object.values(selectedSKU);
+                const selectedColorName = selectValues[selectValues.length - 1];
+                await addToCart(user._id, productName, selectedColorName, quantity);
+                message.success('Thêm vào giỏ hàng thành công')
+
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            message.error('Vui lòng đăng nhập để tiếp tục')
+        }
+    };
+    const handleBuyNow = async () => {
+        try {
+            if (memory !== 'undefined') {
+                const selectedVariant = productDetails.variant.find((variant) => variant.memory === memory);
+                if (selectedVariant) {
+                    const selectedSKUName = selectedSKU[selectedVariant._id];
+                    await addToCart(user._id, productName, selectedSKUName, quantity);
+                    message.success('Thêm vào giỏ hàng thành công', 1); // Thông báo sẽ tự đóng sau 2 giây
+                    // Chuyển đến trang giỏ hàng sau khi thông báo đóng
+                    setTimeout(() => {
+                        window.location.href = '/cart'; 
+                    }, 1000); // Chờ 2 giây trước khi chuyển trang
+                }
+            } else {
+                const selectValues = Object.values(selectedSKU);
+                const selectedColorName = selectValues[selectValues.length - 1];
+                await addToCart(user._id, productName, selectedColorName, quantity);
+                message.success('Thêm vào giỏ hàng thành công', 1); // Thông báo sẽ tự đóng sau 2 giây
+                // Chuyển đến trang giỏ hàng sau khi thông báo đóng
+                setTimeout(() => {
+                    window.location.href = '/cart'; 
+                }, 1000); // Chờ 2 giây trước khi chuyển trang
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            message.error('Vui lòng đăng nhập để tiếp tục');
+        }
+    };
 
 
 
-    const [quantity, setQuantity] = useState(1); // Đặt giá trị ban đầu là 3
+
+    const [quantity, setQuantity] = useState(1);
 
     const handleDecreaseQuantity = () => {
         if (quantity > 1) {
@@ -144,8 +216,9 @@ const ProductDetailComponents = () => {
     };
 
     const handleIncreaseQuantity = () => {
-
-        setQuantity(quantity + 1);
+        if (quantity < 3) {
+            setQuantity(quantity + 1);
+        }
     };
     const handleChange = (value) => {
         setQuantity(value);
@@ -166,11 +239,13 @@ const ProductDetailComponents = () => {
             info: memory,
         });
     }
-    const handleMemoryClick = (newMemory) => {
-        const newUrl = `/product/${productName}/${newMemory}`;
-        window.location.href = newUrl
-    };
+    let totalRating = 0;
+    let averageRating = 0;
 
+    if (productDetails?.ratings.length > 0) {
+        totalRating = productDetails.ratings.reduce((total, review) => total + review.rating, 0);
+        averageRating = totalRating / productDetails.ratings.length;
+    }
     return (
         <WrapperDetail>
             <Row style={{ padding: '15px 12px' }}>
@@ -180,8 +255,8 @@ const ProductDetailComponents = () => {
                             <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
                                 {productDetails.name} {memory}
                             </WrapperStyleNameProduct>
-                            <Rate disabled allowHalf defaultValue={4} />
-                            <span style={{ fontSize: 16, paddingTop: 6 }}>{4}</span>
+                            <Rate disabled allowHalf value={averageRating} />
+                            <span style={{ fontSize: 16, paddingTop: 6 }}>{averageRating.toFixed(1)}</span>
                         </div>
 
                     ) : (
@@ -196,9 +271,9 @@ const ProductDetailComponents = () => {
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
                 <Col span={14} style={{ border: '1px solid #e5e5e5', padding: '8px' }}>
                     <Slider {...sliderSettings} className="slider" style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
-                        {productDetails && productDetails.thumnails.map((thumbnail, index) => (
+                        {productDetails && productDetails.thumnails.slice(1).map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
-                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Image src={thumbnail} alt={`Thumbnail ${index}`} className="slider-image" />
                                 </div>
                             </WrapperStyleImageBig>
@@ -229,7 +304,7 @@ const ProductDetailComponents = () => {
                                         <RetweetOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></RetweetOutlined>
                                         <p>
                                             1 đổi 1 trong&nbsp;
-                                            <b>7 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
+                                            <b>3 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
                                             <a href="/" title="Chính sách dổi trả">Xem chi tiết</a>
                                         </p>
                                     </li>
@@ -263,19 +338,21 @@ const ProductDetailComponents = () => {
                 <Col span={10} style={{ paddingLeft: '10px' }}>
                     <div style={{ padding: '0 0 10px' }}>
                         {productDetails?.variant.map((variant) => (
+
                             variant?.memory && (
                                 <NavLink to={`/product/${productName}/${variant.memory}`}>
-                                <Button
-                                    className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
-                                    onClick={() => {
-                                        setSelectedMemories((prevSelected) => ({
-                                            ...prevSelected,
-                                            [productDetails._id]: variant?.memory,
-                                        }));
-                                    }}
-                                    style={{ padding: '5px 5px', marginInlineEnd: '5px' }}>                  
-                                    {variant?.memory}
-                                </Button>
+                                    <Button
+                                        className={` memory-button ${variant?.memory === selectedMemories[productDetails._id] ? 'selected' : ''}`}
+
+                                        onClick={() => {
+                                            setSelectedMemories((prevSelected) => ({
+                                                ...prevSelected,
+                                                [productDetails._id]: variant?.memory,
+                                            }));
+                                        }}
+                                        style={{ padding: '5px 5px', marginInlineEnd: '5px' }}>
+                                        {variant?.memory}
+                                    </Button>
                                 </NavLink>
                             )
                         ))}
@@ -306,9 +383,24 @@ const ProductDetailComponents = () => {
                                                                 ...prevSelected,
                                                                 [variant._id]: selectedAttribute.sold,
                                                             }));
-                                                            console.log('selectedSold', selectedSold[variant._id])
+                                                            setSelectedSKU((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: selectedAttribute.sku,
+                                                            }));
+                                                            setSelectedQuantity((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: selectedAttribute.quantity,
+                                                            }));
                                                         } else {
                                                             setSelectedSold((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: 'N/A',
+                                                            }));
+                                                            setSelectedSKU((prevSelected) => ({
+                                                                ...prevSelected,
+                                                                [variant._id]: 'N/A',
+                                                            }));
+                                                            setSelectedQuantity((prevSelected) => ({
                                                                 ...prevSelected,
                                                                 [variant._id]: 'N/A',
                                                             }));
@@ -320,7 +412,9 @@ const ProductDetailComponents = () => {
                                                 </Button>
                                             ))}
                                             <WrapperStyleTextSell>
+                                                <p>SKU: {selectedSKU[variant._id]}</p>
                                                 <p>Đã bán: {selectedSold[variant._id]}</p>
+                                                <p>Số lượng còn lại: {selectedQuantity[variant._id]}</p>
                                             </WrapperStyleTextSell>
                                         </div>
                                     );
@@ -359,7 +453,10 @@ const ProductDetailComponents = () => {
                                 style={{ width: '60px' }}
                                 upHandler={null}
                                 downHandler={null}
+                                min={1}
+                                max={3}
                             />
+
                             <button
                                 style={{ border: 'none', background: 'transparent' }}
                                 onClick={handleIncreaseQuantity}>
@@ -374,34 +471,36 @@ const ProductDetailComponents = () => {
                             styleButton={{
                                 background: 'rgb(225,57,69)',
                                 height: '48px',
-                                width: '220px',
+                                width: '100%',
                                 border: 'none',
                                 borderRadius: '4px'
                             }}
-                            textButton={'Mua ngay'}
+                            onClick={handleBuyNow}
+                            textButton={'Mua Ngay'}
                             styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
                         </ButtonComponent>
                         <ButtonComponent
                             bordered={false}
                             size={40}
                             styleButton={{
-                                background: '#fff',
+                                background: 'rgb(225,57,69)',
                                 height: '48px',
-                                width: '220px',
-                                border: '1px solid rgb(13,92,182)',
+                                width: '100%',
+                                border: 'none',
                                 borderRadius: '4px'
                             }}
-                            textButton={'Thêm vào giỏ'}
-                            styleTextButton={{ color: 'rgb(13,92,182)', fontSize: '15px' }}>
+                            onClick={handleAddToCart}
+                            textButton={'Thêm Vào Giỏ'}
+                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}>
                         </ButtonComponent>
                     </div>
                     <br></br>
-                    <div style={{ height: '600px',  textAlign: 'justify'}}>
-                        {productDetails &&  productDetails.promotion ? (
-                            <div style={{fontSize:'20px'}}> 
-                            <div style={{fontSize:'40px',color:'red'}}> <GiftOutlined /> Khuyến mãi </div>
-                            <div>(chỉ áp dụng tại cửa hàng)</div> 
-                            <ProductSale promotion={productDetails.promotion} />
+                    <div style={{ height: '600px', textAlign: 'justify' }}>
+                        {productDetails && productDetails.promotion ? (
+                            <div style={{ fontSize: '20px' }}>
+                                <div style={{ fontSize: '40px', color: 'red' }}> <GiftOutlined /> Khuyến mãi </div>
+                                <div>(chỉ áp dụng tại cửa hàng)</div>
+                                <ProductSale promotion={productDetails.promotion} />
                             </div>
                         ) : (
                             null
@@ -423,12 +522,23 @@ const ProductDetailComponents = () => {
                     </div>
                 </Col>
                 <Col span={8} style={{ paddingLeft: '10px', textAlign: 'center' }}>
-                    <WrapperPropTable dataSource={dataSource} pagination={false}>
-                        <ColumnGroup title="Thông số kỹ thuật">
-                            <Column dataIndex="prop" key="prop" />
-                            <Column dataIndex="info" key="info" />
-                        </ColumnGroup>
-                    </WrapperPropTable>
+                <WrapperPropTable dataSource={dataSource} pagination={false}>
+                    <ColumnGroup title="Thông số kỹ thuật">
+                        <Column dataIndex="prop" key="prop" />
+                        <Column
+                        dataIndex="info"
+                        key="info"
+                        render={(text, record) => {
+                            const containsHTML = /<[a-z][\s\S]*>/i.test(text);
+                            return containsHTML ? (
+                            <div dangerouslySetInnerHTML={{ __html: text }} />
+                            ) : (
+                            text
+                            );
+                        }}
+                        />
+                    </ColumnGroup>
+                </WrapperPropTable>
                 </Col>
             </Row>
             <hr className="my-4" />
@@ -439,7 +549,7 @@ const ProductDetailComponents = () => {
             )}
             <hr className="my-4" />
             <Row>
-                <Rating></Rating>
+                <Rating productName={productName}></Rating>
             </Row>
             <hr className="my-4" />
             <Row >

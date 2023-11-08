@@ -25,24 +25,25 @@ import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux'
 import { resetUser } from "../../redux/Slide/userSlice";
 import { NavLink } from "react-router-dom";
+import SuggestCard from "../CardComponent/suggestcard";
 
 
 
 const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const dispatch = useDispatch();
   const [searchKeyword, setSearchKeyword] = useState('');
-  
   const handleSearch = () => {
     if (searchKeyword) {
-      axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
-        .then((response) => {
-          window.location.href = `/type?keyword=${searchKeyword}`;
-        })
-        .catch((error) => {
-          console.error('Lỗi khi gọi API tìm kiếm: ', error);
-        });
+        axios.get(`${process.env.REACT_APP_API_URL}/product/searchProduct?keyword=${searchKeyword}`)
+            .then((response) => {
+                window.location.href = `/lowtoHigh?keyword=${searchKeyword}`;
+            })
+            .catch((error) => {
+                console.error('Lỗi khi gọi API tìm kiếm: ', error);
+            });
     }
-  }
+}
+
   const handleLogout = async () => {
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/user/Logout`, {}, { withCredentials: true });
@@ -92,24 +93,43 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       <Menu.Item key="2">
         <NavLink to="/profile">Thông tin cá nhân</NavLink>
       </Menu.Item>
+      <Menu.Item key="4">
+        <NavLink  to="/orders">Đơn hàng của bạn</NavLink>
+      </Menu.Item>
       <Menu.Item key="3">
         <NavLink  onClick={handleLogout}>Đăng xuất</NavLink>
       </Menu.Item>
     </Menu>
   );
-  
+  useEffect(() => {
+    if (user && user._id) {
+      axios.get(`${process.env.REACT_APP_API_URL}/cart/getToCart/${user._id}`)
+        .then((response) => {
+          const cartData = response.data.data;
+          setData(cartData);
+        })
+        .catch((error) => {
+          console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+        });
+    }
+  }, [user]);
+  const [data,setData] = useState(null);
   return (
     <WrapperSuperHeader>
       <WrapperHeader className="header-container" style={isScrolled ? { position: 'fixed', zIndex: '100', width: '100%' } : {}}>
         <WrapperHeaderImage className="ant-image" >
           <NavLink to={`/`} className="logo">  <img src="../../image/didong1.png" alt="blink" /> </NavLink>
         </WrapperHeaderImage>
-        <WrapperSearch className="search-box">
+        <WrapperSearch className="search-box" >
           {!isHiddenSearch && (
+           <div  style={{width:`200%`}}>
         <Search
         placeholder="Tìm Kiếm"
-        allowClear
-        onSearch={handleSearch}
+        onSearch={(value) => {
+          if (value) {
+            handleSearch();
+          }
+        }}
         enterButton={
           <Button style={{
             backgroundImage: 'linear-gradient(to bottom, #ff914d, #ffde59)',
@@ -123,13 +143,19 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           const newSearchKeyword = e.target.value;
           setSearchKeyword(newSearchKeyword);
         }}
+        allowClear
       />
+    <SuggestCard
+    searchKeyword={searchKeyword}
+  />
+      </div>
         )}
         </WrapperSearch>
+        <NavLink to={`/cart`}>
         <WrapperCartButton>
           {!isHiddenCart && (
             <div className="grid-item">
-              <Badge count={4} size="small">
+              <Badge count={data ? data.length : 0} size="small">
                 <button class="custom-button" style={{ backgroundColor: '#CC0000', right: '0px' }}>
                   <ShoppingCartOutlined style={{ fontSize: '20px' }} >
                   </ShoppingCartOutlined>&nbsp;Giỏ hàng
@@ -138,6 +164,7 @@ const Header = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </div>
           )}
         </WrapperCartButton>
+        </NavLink>
         <WrapperHeaderAccount>
           {user?.fullName ? (
             <div>

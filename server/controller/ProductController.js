@@ -41,9 +41,9 @@ const getProductByBrandId = async (req, res) => {
   try {
     const brandId = req.params.brandId; 
     const products = await Product.find({ brand: brandId }).populate('variant');
-    return res.status(200).json({
-      data: products
-    });
+
+
+    res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     return res.status(500).json({ msg: 'Lỗi Server' });
@@ -54,9 +54,7 @@ const getProductsByCategoryAndBrand = async (req, res) => {
     const categoryId = req.params.categoryId; 
     const brandId = req.params.brandId; 
     const products = await Product.find({ category: categoryId, brand: brandId }).populate('variant');
-    return res.status(200).json({
-      data: products
-    });
+    res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
     return res.status(500).json({ msg: 'Lỗi Server' });
@@ -67,7 +65,14 @@ const getProductsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.categoryId; 
     
-    const products = await Product.find({ category: categoryId }).populate('variant');
+    const products = await Product.find({ category: categoryId }).populate('variant').populate('brand').populate({
+      path: 'variant',
+      populate: {
+        path: 'attributes',
+      },
+    });;
+
+
 
     res.status(200).json({ success: true, data: products });
   } catch (error) {
@@ -82,20 +87,6 @@ const editProduct = async (req, res) => {
     const productId = req.params.id;
     const data = req.body;
     const updateData = {};
-    if (data.brandName) {
-      const brand = await Brand.findOne({ name: data.brandName });
-      if (!brand) {
-        return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
-      }
-      updateData.brand = brand._id;
-    }
-    if (data.categoryName) {
-      const category = await Category.findOne({ name: data.categoryName });
-      if (!category) {
-        return res.status(404).json({ success: false, error: 'Category không tồn tại' });
-      }
-      updateData.category = category._id;
-    }
     if (data.name) {
       updateData.name = data.name;
     }
@@ -160,7 +151,7 @@ const searchProducts = async (req, res) => {
     const keyword = req.query.keyword;
     const regex = new RegExp(keyword, 'i'); 
     const products = await Product.find({
-      name: { $regex: regex }, 
+      name: { $regex: regex }, isHide: false
     }).populate('brand').populate('category').populate({
       path: 'variant',
       populate: {
@@ -175,7 +166,7 @@ const searchProducts = async (req, res) => {
 };
 const detailsProduct = async (req, res) => {
   try {
-    const { name, memory } = req.params; 
+    const { name } = req.params; 
     const products = await Product.findOne({ name })
       .populate('brand')
       .populate('category')
@@ -345,7 +336,45 @@ const filterProductsByCategoryandBrand = async (req, res) => {
     res.status(500).json({ success: false, error: 'Lỗi Server' });
   }
 };
+const getProductRating = async (req, res) => {
+  try {
+    const productName = req.params.productName;
+    const product = await Product.findOne({ name: productName }).populate({
+      path: 'ratings',
+      populate: { path: 'user' } 
+    });
 
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Sản phẩm không tồn tại' });
+    }
 
+    const rating = product.ratings;
 
-module.exports = { addProduct,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory,filterProductsByCategoryandBrand};
+    const starFilter = parseInt(req.query.star);
+    const hasPicturesFilter = req.query.hasPictures;
+
+    if (!isNaN(starFilter) && starFilter >= 1 && starFilter <= 5) {
+      const rating1 = rating.filter((review) => review.rating === starFilter);
+      if (hasPicturesFilter === 'true') {
+        const rating2 = rating1.filter((review) => review.pictures.length > 0);
+        return res.status(200).json({ success: true, data: rating2 });
+      } else{
+      return res.status(200).json({ success: true, data: rating1 });
+      }
+    }
+
+    if (hasPicturesFilter === 'true') {
+      const rating1 = rating.filter((review) => review.pictures.length > 0);
+      return res.status(200).json({ success: true, data: rating1 });
+    }
+
+    if (!starFilter && hasPicturesFilter === 'false') {
+      return res.status(200).json({ success: true, data: rating });
+    }
+  } catch (error) {
+    console.error('Lỗi:', error);
+    res.status(500).json({ success: false, error: 'Lỗi Server' });
+  }
+};
+
+module.exports = { addProduct,getProductRating,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory,filterProductsByCategoryandBrand};

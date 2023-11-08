@@ -22,8 +22,9 @@ const userRegister = async (req, res) => {
 
 const userLogin = async (req, res) => {
     const password = req.body.passWord;
+    const email = req.body.email.toLowerCase();
     try {
-        const userFound = await User.findOne({ email: req.body.email });
+        const userFound = await User.findOne({ email: email });
         if (userFound) {
             const validPassword = await argon2.verify(userFound.passWord, password);
             if (validPassword) {
@@ -50,7 +51,7 @@ const userLogin = async (req, res) => {
                 
                 
                 const tokenData = refresh_Token
-                res.cookie('refresh_token', tokenData, { httpOnly: true, secure:true, samesite: 'strict',expires: new Date(Date.now() + 8600000000) });
+                res.cookie('refresh_token', tokenData, { httpOnly: true, secure:true, samesite: 'strict',expires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
                 return res.status(200).json({
                    access_Token,
                    refresh_Token
@@ -282,7 +283,7 @@ const changePassword = async (req, res) => {
   };
   const checkAcc = async (req, res) => {
     try {
-      const { email } = req.params;
+      const  email  = req.params.email.toLowerCase();
       const user = await User.findOne({ email: email });   
       if (!user) {
         return res.status(404).json({ message: 'User not found' });

@@ -3,11 +3,16 @@ import {  Switch, Table, Image, Upload, Button, message, Modal, Alert} from 'ant
 import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { UploadOutlined,DeleteOutlined } from '@ant-design/icons';
+import { useSelector } from "react-redux";
 
 
 
 const TableBrand = () => {
-    const [brandData, setbrandData] = useState([]); 
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
+    const [category, setCategory] = useState([]);
     const [isDeleteBrand, setDeleteBrand] = useState(false); 
     const [currentBrandId, setCurrentBrandId] = useState(null);
     const columns = [
@@ -49,10 +54,10 @@ const TableBrand = () => {
                 }
               };
               const updateBrandData = (brandId, newImageUrl) => {
-                const updatedData = brandData.map((item) =>
+                const updatedData = selectedCategoryBrands.map((item) =>
                   item._id === brandId ? { ...item, picture: newImageUrl } : item
                 );
-                setbrandData(updatedData);
+                setSelectedCategoryBrands(updatedData);
               };
             return (
             <Upload {...props} >
@@ -77,11 +82,6 @@ const TableBrand = () => {
           },
       },
       {
-        title: 'Danh mục',
-        dataIndex: 'categoryId',
-        render: category => category.name,
-      },
-      {
         title: 'Xoá',
         render: (record) => {
             return (
@@ -103,12 +103,15 @@ const TableBrand = () => {
           },
       },
     ];
-  
     useEffect(() => {
       axios
-        .get(`${process.env.REACT_APP_API_URL}/brand/getBrand`)
+        .get(`${process.env.REACT_APP_API_URL}/category/getAll`)
         .then((response) => {
-            setbrandData(response.data.data); 
+            setCategory(response.data.data); 
+            if (isFirstLoad && response.data.data.length > 0) {
+              handleCategoryClick(response.data.data[0]._id);
+              setIsFirstLoad(false);
+            }
         })
         .catch((error) => {
           console.error('Lỗi khi gọi API: ', error);
@@ -117,12 +120,12 @@ const TableBrand = () => {
     const handleSwitchChange = (checked, brandId) => {
         const newIsHide = !checked; 
         axios
-          .put(`${process.env.REACT_APP_API_URL}/brand/updateBrand/${brandId}`, { isHide: newIsHide })
+          .put(`${process.env.REACT_APP_API_URL}/brand/updateBrand/${brandId}`, { isHide: newIsHide },{headers})
           .then((response) => {
-            const updatedData = brandData.map((item) =>
+            const updatedData = selectedCategoryBrands.map((item) =>
               item._id === brandId ? { ...item, isHide: newIsHide } : item
             );
-            setbrandData(updatedData);
+            setSelectedCategoryBrands(updatedData);
           })
           .catch((error) => {
             console.error('Lỗi khi cập nhật trạng thái: ', error);
@@ -130,11 +133,11 @@ const TableBrand = () => {
       };
       const handleDeleteBrand = (brandId) => {
         axios
-          .delete(`${process.env.REACT_APP_API_URL}/brand/delete/${brandId}`)
+          .delete(`${process.env.REACT_APP_API_URL}/brand/delete/${brandId}`,{headers})
           .then((response) => {
             if (response.data.success) {
-              const updatedData = brandData.filter((item) => item._id !== brandId);
-              setbrandData(updatedData);
+              const updatedData = selectedCategoryBrands.filter((item) => item._id !== brandId);
+              setSelectedCategoryBrands(updatedData);
               message.success('Xóa thương hiệu thành công');
             } else {
               message.error('Lỗi khi xóa thương hiệu');
@@ -145,16 +148,42 @@ const TableBrand = () => {
             message.error('Lỗi khi xóa thương hiệu');
           });
       };
+      const [selectedCategoryBrands, setSelectedCategoryBrands] = useState([]);
+      const [selectedCategory, setSelectedCategory] = useState(null);
+      const [isFirstLoad, setIsFirstLoad] = useState(true);
+      const handleCategoryClick = (categoryId) => {
+                axios
+                .get(`${process.env.REACT_APP_API_URL}/brand/getBrand/${categoryId}`)
+                .then((response) => {
+                  setSelectedCategory(categoryId);
+                  setSelectedCategoryBrands(response.data.data);
+                })
+                .catch((error) => {
+                  console.error('Lỗi khi gọi API: ', error);
+                });
+            };
     return (
       <div>
-           <Alert
-            message="Lưu ý: Không được xoá những thương hiệu đang hiện vì nó đang chứa các sản phẩm, nếu xoá sẽ bị lỗi, chỉ xoá những thương hiệu lỗi nếu quá trình thêm bị sai"
-            type="warning"
-            showIcon
-            style={{ marginBottom: '16px',background:'#FFFF99' }}
-          />
-        <Table columns={columns} dataSource={brandData} /> 
+      <Alert
+        message="Lưu ý: Không được xoá những thương hiệu đang hiện vì nó đang chứa các sản phẩm, nếu xoá sẽ bị lỗi, chỉ xoá những thương hiệu lỗi nếu quá trình thêm bị sai"
+        type="warning"
+        showIcon
+        style={{ marginBottom: '16px', background: '#FFFF99' }}
+      />
+      <div>
+        {category.map((category) => (
+          <Button
+            key={category._id}
+            style={{ marginRight: '10px' }}
+            onClick={() => handleCategoryClick(category._id)}
+            className={`memory-button ${selectedCategory === category._id ? 'selected' : ''}`}
+          >
+            {category.name}
+          </Button>
+        ))}
       </div>
+      <Table columns={columns} dataSource={selectedCategoryBrands} />
+    </div>
     );
   };
   

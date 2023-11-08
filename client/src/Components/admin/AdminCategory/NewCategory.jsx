@@ -7,6 +7,7 @@ import {
   Input,
 } from 'antd';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -40,6 +41,10 @@ const tailFormItemLayout = {
 
 const NewCategory = () => {
   const [form] = Form.useForm();
+  const user = useSelector((state)=> state.user)
+  const headers = {
+    token: `Bearers ${user.access_token}`,
+};
   const props = {
     name: 'image',
     action: `${process.env.REACT_APP_API_URL}/upload`,
@@ -70,7 +75,7 @@ const NewCategory = () => {
   };
   const onFinish = async (values) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/category/addCategory`, values);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/category/addCategory`, values,{headers});
       if (response.data.success) {
         message.success('Thêm danh mục thành công');
         form.resetFields();

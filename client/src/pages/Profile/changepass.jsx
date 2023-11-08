@@ -9,6 +9,9 @@ import {
 import axios from "axios";
     const ChangePassword = () => {
     const user1 = useSelector((state) => state.user);
+    const headers = {
+        token: `Bearers ${user1.access_token}`,
+    };
     const [message, setMessage] = useState('');
     const [success, setSuccess] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -35,7 +38,12 @@ import axios from "axios";
         try {
             const response = await axios.put(`${process.env.REACT_APP_API_URL}/user/changepassword/${user1._id}`, {
                 currentPassword: user.passWord,
-                newPassword: user.newPass,},  { withCredentials: true });
+                newPassword: user.newPass,},  { headers });
+                setUser({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+                })
                 setSuccess(true);
                 setMessage("Đổi mật khẩu thành công!");
         } catch (error) {

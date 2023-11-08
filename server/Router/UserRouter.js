@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const userAuthenticate = require('../controller/UserController');
-const { authMiddleware, authUserMiddleware, verifyRefreshToken } = require('../middleware/authMiddleware');
+const { authMiddleware, authUserMiddleware } = require('../middleware/authMiddleware');
 
 
 router.post('/Register', userAuthenticate.userRegister);
@@ -12,7 +12,7 @@ router.post('/Login', userAuthenticate.userLogin);
 
 router.post('/Logout', userAuthenticate.userLogout);
 
-router.post('/update/:id', verifyRefreshToken, userAuthenticate.userUpdate);
+router.post('/update/:id', authUserMiddleware, userAuthenticate.userUpdate);
 
 router.delete('/delete/:id', authMiddleware, userAuthenticate.deleteUser);
 
@@ -26,7 +26,7 @@ router.put('/forgotpassword',userAuthenticate.forgotPassword)
 
 router.get('/searchUser', authMiddleware,userAuthenticate.searchUser)
 
-router.put('/changepassword/:id',verifyRefreshToken,userAuthenticate.changePassword)
+router.put('/changepassword/:id',authUserMiddleware,userAuthenticate.changePassword)
 
 router.get('/checkAcc/:email',userAuthenticate.checkAcc)
 module.exports = router
