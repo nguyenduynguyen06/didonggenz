@@ -78,7 +78,7 @@ const PaymentInfo = () => {
             };
             axios.post(`${process.env.REACT_APP_API_URL}/VNPAY/create_payment_url`, paymentData)
             .then(response => {
-                window.location.href = response.data.data;
+             
             })
             .catch(error => {
                 console.error(error);

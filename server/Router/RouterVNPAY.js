@@ -74,8 +74,7 @@ router.post('/create_payment_url', function (req, res, next) {
     let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
     vnp_Params['vnp_SecureHash'] = signed;
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-
-    res.status(200).json({ data: vnpUrl })
+    res.redirect(vnpUrl)
 });
 router.get('/vnpay_return', function (req, res, next) {
     let vnp_Params = req.query;
