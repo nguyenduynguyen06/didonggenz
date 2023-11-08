@@ -42,13 +42,12 @@ app.use('/api/cart',routerCart)
 app.use('/api/order',routerOrder)
 app.use('/api/VNPAY', routerVNPAY)
 app.use('/api/voucher',routerVoucher)
-if(process.env.NODE_ENV === 'PRODUCTION')
-{
+
 app.use(express.static(path.join(__dirname,'../client/build')))
 app.get('*',(req,res) =>{
     res.sendFile(path.join(__dirname,'../client/build/index.html'))
 })
-}
+
 connect2DB();
 const PORT = process.env.PORT 
 server.listen(PORT, () => {
