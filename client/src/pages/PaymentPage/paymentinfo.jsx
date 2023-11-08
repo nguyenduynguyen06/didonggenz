@@ -76,7 +76,7 @@ const PaymentInfo = () => {
                 bankCode: '',
                 orderinfo: `${user1.email} thanh toán, mã hoá đơn là: `
             };
-            axios.post('/api/VNPAY/create_payment_url', paymentData)
+            axios.post(`${process.env.REACT_APP_API_URL}/VNPAY/create_payment_url`, paymentData)
             .then(response => {
                 window.open(response.data.data);
             })
