@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 let $ = require('jquery');
 const request = require('request');
 const moment = require('moment');
