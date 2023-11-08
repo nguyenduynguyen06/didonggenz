@@ -3,8 +3,8 @@ let router = express.Router();
 let $ = require('jquery');
 const request = require('request');
 const moment = require('moment');
-const crypto = require('crypto');
-let querystring = require('qs');
+
+
 function sortObject(obj) {
 	let sorted = {};
 	let str = [];
@@ -25,10 +25,10 @@ router.post('/create_payment_url', function (req, res, next) {
     
     process.env.TZ = 'Asia/Ho_Chi_Minh';
     
-    const date = new Date();
-    const createDate = moment(date).format('YYYYMMDDHHmmss');
+    let date = new Date();
+    let createDate = moment(date).format('YYYYMMDDHHmmss');
     
-    const ipAddr = req.headers['x-forwarded-for'] ||
+    let ipAddr = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress;
@@ -67,20 +67,20 @@ router.post('/create_payment_url', function (req, res, next) {
 
     vnp_Params = sortObject(vnp_Params);
 
-    
-    const signData = querystring.stringify(vnp_Params, { encode: false });
-   
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
+    let querystring = require('qs');
+    let signData = querystring.stringify(vnp_Params, { encode: false });
+    let crypto = require("crypto");     
+    let hmac = crypto.createHmac("sha512", secretKey);
+    let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
     vnp_Params['vnp_SecureHash'] = signed;
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
     res.status(200).json({ data: vnpUrl })
 });
 router.get('/vnpay_return', function (req, res, next) {
-    const vnp_Params = req.query;
+    let vnp_Params = req.query;
 
-    const secureHash = vnp_Params['vnp_SecureHash'];
+    let secureHash = vnp_Params['vnp_SecureHash'];
 
     delete vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHashType'];
@@ -88,12 +88,14 @@ router.get('/vnpay_return', function (req, res, next) {
     vnp_Params = sortObject(vnp_Params);
 
     
-    const tmnCode = process.env.VNP_TMN_CODE;
-    const secretKey = process.env.VNP_HASH_SECRET;
+    let tmnCode = process.env.VNP_TMN_CODE;
+    let secretKey = process.env.VNP_HASH_SECRET;
 
-    const signData = querystring.stringify(vnp_Params, { encode: false });
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");     
+    let querystring = require('qs');
+    let signData = querystring.stringify(vnp_Params, { encode: false });
+    let crypto = require("crypto");     
+    let hmac = crypto.createHmac("sha512", secretKey);
+    let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");     
 
     if (secureHash === signed) {
         const vnp_ResponseCode = vnp_Params['vnp_ResponseCode'];
