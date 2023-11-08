@@ -32,6 +32,7 @@
     "qs": "^6.11.2",
     "react-responsive-carousel": "^3.2.23",
     "request": "^2.88.2",
+    "sha.js": "^2.4.11",
     "webpack-dev-server": "^4.15.1"
   }
 }

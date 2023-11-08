@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const sha256 = require('sha.js/sha256'); // Sử dụng sha256 từ sha.js
+const sha256 = require('sha.js/sha256'); 
 let $ = require('jquery');
 const request = require('request');
 const moment = require('moment');
