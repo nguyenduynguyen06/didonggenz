@@ -29,7 +29,7 @@ import Rating from "./ratecomponent"
 import SuggestProduct from "./suggestproductcomponent"
 import ProductSale from "./productsale"
 import { useSelector } from "react-redux"
-import { CommentsDisabledOutlined } from "@mui/icons-material"
+
 
 
 const { Column, ColumnGroup } = Table;
