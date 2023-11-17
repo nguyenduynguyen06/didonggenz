@@ -13,13 +13,12 @@ const HomePage = () => {
     window.scrollTo({top:0,behavior: "instant"})
 },[])
   return (
-    <div className="home-container">
+    <div className="home-container" >
       <Header></Header>
       <br></br>
-      <WrapperHomePage>
-        <Col style={{ width: '5%', paddingLeft: '10px', overflow: 'hidden' }}>
-        </Col>
-        <Col style={{ width: '89%', paddingLeft: '10px', paddingRight: '10px' }}>
+      
+      <WrapperHomePage style={{display:'flex', justifyContent: 'center', padding: '4%'}}>
+        <Col style={{ width: '100%'}}>
           <div >
             <Slide />
           </div>
@@ -29,10 +28,6 @@ const HomePage = () => {
           <ProductHomePage></ProductHomePage>
           <br></br>
           <AccessoryHomePage></AccessoryHomePage>
-        </Col>
-        <Col style={{ width: '5%', overflow: 'hidden', paddingRight: '20px' }}>
-          {/* <Imagebanner>
-              </Imagebanner> */}
         </Col>
       </WrapperHomePage>
     </div>

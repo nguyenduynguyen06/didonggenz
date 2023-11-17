@@ -5,9 +5,9 @@ const ProductVariant = require('../Model/ProductVariantModel');
 const { format } = require('date-fns');
 const addProduct = async (req, res) => {
   try {
-    const { name, desc, warrantyPeriod,brandName, categoryName, properties,thumnails,include} = req.body;
-    const releaseTimeInput = req.body.releaseTime; 
-    const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy'); 
+    const { name, desc, warrantyPeriod, brandName, categoryName, properties, thumnails, include } = req.body;
+    const releaseTimeInput = req.body.releaseTime;
+    const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy');
     const brand = await Brand.findOne({ name: brandName });
     if (!brand) {
       return res.status(404).json({ success: false, error: 'Brand không tồn tại' });
@@ -39,7 +39,7 @@ const addProduct = async (req, res) => {
 
 const getProductByBrandId = async (req, res) => {
   try {
-    const brandId = req.params.brandId; 
+    const brandId = req.params.brandId;
     const products = await Product.find({ brand: brandId }).populate('variant');
 
 
@@ -51,8 +51,8 @@ const getProductByBrandId = async (req, res) => {
 };
 const getProductsByCategoryAndBrand = async (req, res) => {
   try {
-    const categoryId = req.params.categoryId; 
-    const brandId = req.params.brandId; 
+    const categoryId = req.params.categoryId;
+    const brandId = req.params.brandId;
     const products = await Product.find({ category: categoryId, brand: brandId }).populate('variant');
     res.status(200).json({ success: true, data: products });
   } catch (error) {
@@ -63,8 +63,8 @@ const getProductsByCategoryAndBrand = async (req, res) => {
 
 const getProductsByCategory = async (req, res) => {
   try {
-    const categoryId = req.params.categoryId; 
-    
+    const categoryId = req.params.categoryId;
+
     const products = await Product.find({ category: categoryId }).populate('variant').populate('brand').populate({
       path: 'variant',
       populate: {
@@ -94,8 +94,8 @@ const editProduct = async (req, res) => {
       updateData.desc = data.desc;
     }
     if (data.releaseTime) {
-      const releaseTimeInput = data.releaseTime; 
-      const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy'); 
+      const releaseTimeInput = data.releaseTime;
+      const formattedReleaseTime = format(new Date(releaseTimeInput), 'dd/MM/yyyy');
       updateData.releaseTime = formattedReleaseTime;
     }
     if (data.warrantyPeriod) {
@@ -149,7 +149,7 @@ const deleteProduct = async (req, res) => {
 const searchProducts = async (req, res) => {
   try {
     const keyword = req.query.keyword;
-    const regex = new RegExp(keyword, 'i'); 
+    const regex = new RegExp(keyword, 'i');
     const products = await Product.find({
       name: { $regex: regex }, isHide: false
     }).populate('brand').populate('category').populate({
@@ -166,12 +166,12 @@ const searchProducts = async (req, res) => {
 };
 const detailsProduct = async (req, res) => {
   try {
-    const { name } = req.params; 
+    const { name } = req.params;
     const products = await Product.findOne({ name })
       .populate('brand')
       .populate('category')
       .populate({
-        path: 'variant', 
+        path: 'variant',
         populate: {
           path: 'attributes',
         },
@@ -190,14 +190,14 @@ const detailsProduct = async (req, res) => {
 const getAllProduct = async (req, res) => {
   try {
     const products = await Product.find()
-    .populate('brand') 
-    .populate('category')
-    .populate({
-      path: 'variant',
-      populate: {
-        path: 'attributes',
-      },
-    });
+      .populate('brand')
+      .populate('category')
+      .populate({
+        path: 'variant',
+        populate: {
+          path: 'attributes',
+        },
+      });
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     console.error('Lỗi:', error);
@@ -272,8 +272,8 @@ const filterProductsByCategory = async (req, res) => {
 };
 const filterProductsByCategoryandBrand = async (req, res) => {
   try {
-    const categoryId = req.params.categoryId; 
-    const brandId = req.params.brandId; 
+    const categoryId = req.params.categoryId;
+    const brandId = req.params.brandId;
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
     const includeOldPrice = req.query.includeOldPrice === 'true';
@@ -301,7 +301,7 @@ const filterProductsByCategoryandBrand = async (req, res) => {
       ];
     }
 
-    const products = await Product.find({ category: categoryId, brand: brandId  })
+    const products = await Product.find({ category: categoryId, brand: brandId })
       .populate('variant', null, matchCondition)
       .populate('brand')
       .populate('category');
@@ -341,7 +341,7 @@ const getProductRating = async (req, res) => {
     const productName = req.params.productName;
     const product = await Product.findOne({ name: productName }).populate({
       path: 'ratings',
-      populate: { path: 'user' } 
+      populate: { path: 'user' }
     });
 
     if (!product) {
@@ -358,8 +358,8 @@ const getProductRating = async (req, res) => {
       if (hasPicturesFilter === 'true') {
         const rating2 = rating1.filter((review) => review.pictures.length > 0);
         return res.status(200).json({ success: true, data: rating2 });
-      } else{
-      return res.status(200).json({ success: true, data: rating1 });
+      } else {
+        return res.status(200).json({ success: true, data: rating1 });
       }
     }
 
@@ -377,4 +377,4 @@ const getProductRating = async (req, res) => {
   }
 };
 
-module.exports = { addProduct,getProductRating,getProductByBrandId,getProductsByCategory,editProduct,deleteProduct,searchProducts,getAllProduct,getProductsByCategoryAndBrand ,detailsProduct,filterProductsByCategory,filterProductsByCategoryandBrand};
+module.exports = { addProduct, getProductRating, getProductByBrandId, getProductsByCategory, editProduct, deleteProduct, searchProducts, getAllProduct, getProductsByCategoryAndBrand, detailsProduct, filterProductsByCategory, filterProductsByCategoryandBrand };

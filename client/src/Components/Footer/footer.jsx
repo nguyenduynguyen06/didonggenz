@@ -19,20 +19,6 @@ const Footer = () => {
           <div className='me-5 d-none d-lg-block'>
             <span style={{ color: 'gray', fontWeight: 'bold' }}>Hãy liên hệ với chúng tôi qua:</span>
           </div>
-          <div>
-            <a href='https://www.facebook.com/profile.php?id=100012134081325' className='me-4 text-reset'>
-              <MDBIcon fab icon="facebook-f" />
-            </a>
-            <a href='https://www.facebook.com/quangduwon.le' className='me-4 text-reset'>
-              <MDBIcon fab icon="google" />
-            </a>
-            <a href='https://www.instagram.com/le.qdwg/' className='me-4 text-reset'>
-              <MDBIcon fab icon="instagram" />
-            </a>
-            <a href='' className='me-4 text-reset'>
-              <MDBIcon fab icon="github" />
-            </a>
-          </div>
         </section>
         <section className=''>
           <MDBContainer className='text-center text-md-start mt-5'>

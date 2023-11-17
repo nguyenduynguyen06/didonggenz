@@ -30,5 +30,6 @@ router.delete('/delete/:orderId',authMiddleware,orderController.deleteOrder)
 router.put('/cancel/:orderCode',orderController.cancelOrder)
 router.get('/getOrderShipping', orderController.getOrdersShipping);
 router.put('/rating',orderController.addProductRating)
-router.put('/changeProduct',orderController.changeProduct)
+router.put('/changeProduct', authMiddleware,orderController.changeProduct)
+router.put('/checkBH',orderController.checkBH)
 module.exports = router;

@@ -9,13 +9,9 @@ const Orders = () => {
         <div>
             <Header></Header>
             <br></br>
-            <Row>
-                <Col style={{ width: '5%', paddingLeft: '10px', overflow: 'hidden' }}></Col>
-                <Col style={{ width: '89%', paddingLeft: '10px', paddingRight: '10px' }}>
+                <div style={{ width: '100%', padding: '0 10px 0 10px'}}>
                     <Tab />
-                </Col>
-                <Col style={{ width: '5%', paddingLeft: '10px', overflow: 'hidden' }}></Col>
-            </Row>
+                </div>
         </div>
 
     )

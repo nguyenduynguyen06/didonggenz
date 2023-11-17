@@ -5,7 +5,6 @@ import OrderList from './orderlist';
 
 const Tab = () => {
   const [activeTab, setActiveTab] = useState('Chờ xác nhận');
-
   const changeTab = (tabName) => {
     setActiveTab(tabName);
   };
@@ -40,13 +39,13 @@ const Tab = () => {
           className={activeTab === 'Đã hoàn thành' ? 'active' : ''}
           onClick={() => changeTab('Đã hoàn thành')}
         >
-          <i class="far fa-square-check"></i>Đã hoàn thành
+          <i class="fas fa-clipboard-check"></i>Đã hoàn thành
         </WrapperBtn>
         <WrapperBtn size='large' style={{ height: 'auto' }}
           className={activeTab === 'Đã hủy' ? 'active' : ''}
           onClick={() => changeTab('Đã hủy')}
         >
-          <i class="far fa-square-check"></i>Đã huỷ
+          <i class="fas fa-rectangle-xmark"></i>Đã huỷ
         </WrapperBtn>
       </div>
       <div className="tab-content">

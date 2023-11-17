@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
+import { WrapperButtonMore, WrapperCard } from '../styled';
+
 import { Button, FloatButton, Rate } from 'antd';
 import { Link, NavLink } from 'react-router-dom';
 import { CustomerServiceOutlined } from '@ant-design/icons';
-
+import Loading from '../../../Components/LoadingComponents/Loading'
 function ProductHomePage() {
   const [products, setProducts] = useState([]);
   const [selectedMemories, setSelectedMemories] = useState({});
-  const [cardsToShow, setCardsToShow] = useState();
-  const mainContainerRef = useRef(null);
-
+  const [cardsToShow, setCardsToShow] = useState(6);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,32 +32,15 @@ function ProductHomePage() {
         });
 
         setSelectedMemories(initialMemories);
+        setLoading(false);
       } catch (error) {
         console.error('Lỗi:', error);
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  const calculateCardsPerRow = () => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
-
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Width of each card
-
-    return Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
-  };
-  useEffect(() => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
-
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Width of each card
-
-    const cardsPerRow = Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
-    setCardsToShow(cardsPerRow); // Set the number of cards to show initially
-  }, [mainContainerRef]);
 
   const calculateTotalRatings = (product) => {
     if (!product || !product.ratings) {
@@ -87,9 +70,8 @@ function ProductHomePage() {
 
   const [isButtonHovered, setIsButtonHovered] = useState(false);
 
-  const cardsPerRow = calculateCardsPerRow(); // Calculate the number of cards per row
-
   const hasMoreProducts = products.length > cardsToShow;
+
   const calculateAverageRating = (product) => {
     if (product.length === 0) {
       return 0;
@@ -101,25 +83,26 @@ function ProductHomePage() {
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\bannerpd.jpg" style={{ width: '100%' }} alt='title'></img>
-      <div className='mainContainer' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <Loading isLoading={loading}>
+      <div className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center' }}>
         {products
           .filter((product) => product.isHide === false)
           .slice(0, cardsToShow)
           .map((product) => (
             <div className='box' key={product._id} style={{ display: 'flex' }}>
-              <div className='card'>
-                <NavLink className="image" to={`/product/${product.name}/${selectedMemories[product._id]}`}>
+              <NavLink className='card' to={`/product/${product.name}/${selectedMemories[product._id]}`}>
+                <div className="image">
                   <img src={product.thumnails[0]} />
-                </NavLink>
+                </div>
                 <div className='desc'>
                   <div style={{ height: '3em' }}>
                     <h1 style={{ padding: 3 }}>{product?.name}</h1>
                   </div>
                   <div>
                     {product?.variant.map((variant) => (
-                      <Button
-                        className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
-                        onClick={() => {
+                      <Button classNames={'memory'} className={` memory-button ${variant.memory === selectedMemories[product._id] ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.preventDefault();
                           setSelectedMemories((prevSelected) => ({
                             ...prevSelected,
                             [product._id]: variant.memory,
@@ -147,7 +130,7 @@ function ProductHomePage() {
                     </div>
                   </div>
                 </div>
-              </div>
+                </NavLink>
             </div>
           ))}
       </div>
@@ -161,24 +144,14 @@ function ProductHomePage() {
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
             onClick={() => {
-              setCardsToShow(cardsToShow + cardsPerRow); // Increase the number of cards to show
+              setCardsToShow(cardsToShow + 6); // Increase the number of cards to show
             }}
           >
             Xem thêm
           </WrapperButtonMore>
         </div>
       )}
-      <FloatButton.Group shape="circle" style={{ right: 24 }}>
-        <FloatButton
-          shape="circle"
-          type="primary"
-          style={{
-            right: 94,
-          }}
-          icon={<CustomerServiceOutlined />}
-        />
-        <FloatButton.BackTop />
-      </FloatButton.Group>
+       </Loading>
     </WrapperCard>
   );
 }

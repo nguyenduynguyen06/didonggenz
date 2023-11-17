@@ -3,12 +3,12 @@ import { WrapperButtonMore, WrapperCard } from '../styled';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import { Rate } from 'antd';
+import Loading from '../../../Components/LoadingComponents/Loading';
 
 function AccessoryHomePage() {
   const [products, setProducts] = useState([]);
-  const [cardsToShow, setCardsToShow] = useState();
-  const mainContainerRef = useRef(null);
-
+  const [cardsToShow, setCardsToShow] = useState(6);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getCategoryByName();
   }, []);
@@ -26,32 +26,13 @@ function AccessoryHomePage() {
       const productsData = await Promise.all(productPromises);
       const allProducts = productsData.flatMap((response) => response.data.data);
       setProducts(allProducts);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
 
-
-
-  const calculateCardsPerRow = () => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
-
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Width of each card
-
-    return Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
-  };
-  useEffect(() => {
-    const mainContainer = mainContainerRef.current;
-    if (!mainContainer) return;
-
-    const containerWidth = mainContainer.offsetWidth;
-    const cardWidth = 200; // Width of each card
-
-    const cardsPerRow = Math.floor(containerWidth / cardWidth); // Calculate the number of cards per row
-    setCardsToShow(cardsPerRow); // Set the number of cards to show initially
-  }, [mainContainerRef]);
 
   const calculateTotalRatings = (product) => {
     if (!product || !product.ratings) {
@@ -79,7 +60,6 @@ function AccessoryHomePage() {
   };
 
   const [isButtonHovered, setIsButtonHovered] = useState(false);
-  const cardsPerRow = calculateCardsPerRow(); // Calculate the number of cards per row
 
   const hasMoreProducts = products.length > cardsToShow;
   const calculateAverageRating = (product) => {
@@ -93,7 +73,8 @@ function AccessoryHomePage() {
   return (
     <WrapperCard>
       <img className='imgtt' src="..\..\image\banneracc.png" style={{ width: '100%' }} alt='title'></img>
-      <div className='mainContainerAcc' ref={mainContainerRef} style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <Loading isLoading={loading}>
+      <div className='mainContainerAcc' style={{ alignItems: 'center', justifyContent: 'center' }}>
         {products.filter((product) => product.isHide === false).slice(0, cardsToShow).map((product) => (
           <div className='box' key={product._id}>
             <div className='card' >
@@ -135,10 +116,11 @@ function AccessoryHomePage() {
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
             onClick={() => {
-              setCardsToShow(cardsToShow + cardsPerRow); // Increase the number of cards to show
+              setCardsToShow(cardsToShow + 6); // Increase the number of cards to show
             }}          >
           </WrapperButtonMore>
         </div>)}
+        </Loading>
     </WrapperCard>
   );
 }

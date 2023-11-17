@@ -5,6 +5,9 @@ const ProductVariant = require('../Model/ProductVariantModel');
 const addToCart = async (req, res) => {
   try {
     const { userId, productName, SKU, quantity } = req.query;
+    if(!userId){
+      return res.status(200).json({message: 'Vui lòng đăng nhập để tiếp tục'})
+    }
     let cart = await Cart.findOne({ user: userId });
     if (!cart) {
       cart = new Cart({

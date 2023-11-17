@@ -3,12 +3,11 @@ import styled from "styled-components";
 import ButtonComponent from "../../Components/ButtonComponent/ButtonComponent";
 
 export const WrapperHomePage = styled(Row)`
-
-width: 100%;
-height:100%;
-overflow: hidden;
-overflow-x: hidden
-font-family: Palatino, sans-serif;
+  width: 100%;
+  height:100%;
+  overflow: hidden;
+  overflow-x: hidden
+  font-family: Palatino, sans-serif;
 `
 
 export const WrapperNa = styled.div`
@@ -60,9 +59,9 @@ export const WrapperCard = styled.div`
   .mainContainer {
     width:100%;
     background-image: linear-gradient(to left, #FE9100,  #F29600);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    display: grid;
+    grid-auto-rows: minmax(min-content,max-content);
+    grid-template-columns: repeat(6,minmax(0,1fr));
     overflow: hidden;
     padding: 20px;
     border-radius: 0 0 8px 8px;
@@ -71,9 +70,9 @@ export const WrapperCard = styled.div`
   .mainContainerAcc {
     width:100%;
     background-image: linear-gradient(to left, #5f2b89,  #5f2b89);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    display: grid;
+    grid-auto-rows: minmax(min-content,max-content);
+    grid-template-columns: repeat(6,minmax(0,1fr));
     overflow: hidden;
     padding: 20px;
     border-radius: 0 0 8px 8px;
@@ -84,33 +83,41 @@ export const WrapperCard = styled.div`
     background: #fff;
     text-align: center;
     transition: .3s ease-in-out;
-    max-width: 200px;
-    width: 200px;
     border: 1px solid #efefef;
+    height: 100%;
     border-radius: 4px;
+    border-bottom: 1px solid #f3f3f3 !important;
+    border-right: 1px solid #f3f3f3 !important;
   }
 
-   .box:hover {
-    box-shadow: rgba(17, 12, 46, 0.15) 0px 0px 100px 0px;
+  .box:hover{
+    transform: scale(1);
+    z-index:1;
+  }
+  .mainContainer .box:hover {
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   }
 
-   .card {
+  .card {
+    padding: 10px 15px 20px;
+    overflow: hidden;
     width: 100%;
-  }
+    height: 100%;
+    }
 
   .card .image {
+    padding: 5%;
     width:100%;
-    backgroud: #f9f9f9;
-    margin: 20px auto;
     position: relative;
   }
 
   .card .image:hover img {
     transform: scale(1.1);
+    z-index:1;
   }
 
   .card .image img {
-    width:180px;
+    width: 100%;
     transition: .3s ease-in-out;
     cursor: pointer;
   }
@@ -161,34 +168,6 @@ export const WrapperCard = styled.div`
     font-size: 15px;
   }
 
-  // @media screen and (max-width: 998px) {
-  //   .mainContainer{
-  //     padding: 0 3rem;
-  //     justify-content: center;
-  //   }
-
-  //   .card .image {
-  //     width: 50%
-  //   }
-  // }
-
-  // @media screen and (max-width: 1000px) {
-  //   .mainContainer {
-  //     grid-template-columns: repeat(auto-fit, minmax(100px, 200px));
-  //     padding: 5rem 3rem;
-  //     column-gap: 6px;
-  //   }
-  //   .card .image img {
-  //     width:90px;
-  //     transition: .3s ease-in-out;
-  //     cursor: pointer;
-  //   }
-  //   .mainContainer .box:hover {
-  //     box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-  //     transform: scale(1);
-  //   }
-  // }
-
   button#show-more {
     background: #fff;
     color: #ff3300;
@@ -208,6 +187,70 @@ export const WrapperCard = styled.div`
     color: #fff;
     border:none
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  @media screen and (max-width: 1100px) {
+    .mainContainer {
+      display: grid;
+      grid-auto-rows: minmax(min-content,max-content);
+      grid-template-columns: repeat(6,minmax(0,1fr));
+      gap: 2px;
+    }
+    .mainContainerAcc {
+      display: grid;
+      grid-auto-rows: minmax(min-content,max-content);
+      grid-template-columns: repeat(6,minmax(0,1fr));
+      gap: 2px;
+    }
+    .box {
+      background: #fff;
+      text-align: center;
+      transition: .3s ease-in-out;
+      border: 1px solid #efefef;
+      height: 100%;
+      width:100%;
+    }
+    .card .image img {
+      width: 100%;
+      transition: .3s ease-in-out;
+    }
+    .card .image {
+      height: auto;
+      position: relative;
+    }
+    .card .desc h1 {
+      font-size: 11px;
+    }
+    .memory-button span{
+      font-size: 11px;
+    }
+  }
+  @media screen and (max-width: 900px) {
+    .mainContainer {
+      display: grid;
+      grid-auto-rows: minmax(min-content,max-content);
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 2px;
+    }
+    .mainContainerAcc {
+      display: grid;
+      grid-auto-rows: minmax(min-content,max-content);
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 2px;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .mainContainer {
+      display: grid;
+      grid-auto-rows: minmax(min-content,max-content);
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 2px;
+    }
+    .mainContainerAcc {
+      display: grid;
+      grid-auto-rows: minmax(min-content,max-content);
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 2px;
+    }
   }
 `
 

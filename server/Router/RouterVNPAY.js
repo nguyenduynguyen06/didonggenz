@@ -3,8 +3,8 @@ let router = express.Router();
 let $ = require('jquery');
 const request = require('request');
 const moment = require('moment');
-
-
+const querystring = require('qs');
+const crypto = require("crypto"); 
 function sortObject(obj) {
 	let sorted = {};
 	let str = [];
@@ -67,9 +67,8 @@ router.post('/create_payment_url', function (req, res, next) {
 
     vnp_Params = sortObject(vnp_Params);
 
-    let querystring = require('qs');
-    let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");     
+  
+    let signData = querystring.stringify(vnp_Params, { encode: false });    
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
     vnp_Params['vnp_SecureHash'] = signed;
@@ -91,9 +90,8 @@ router.get('/vnpay_return', function (req, res, next) {
     let tmnCode = process.env.VNP_TMN_CODE;
     let secretKey = process.env.VNP_HASH_SECRET;
 
-    let querystring = require('qs');
-    let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");     
+  ;
+    let signData = querystring.stringify(vnp_Params, { encode: false });     
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");     
 

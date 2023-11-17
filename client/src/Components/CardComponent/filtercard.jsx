@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Button, Pagination, Rate } from 'antd';
 import { WrapperCard, WrapperFilterCard } from './styled';
 import { InfoCircleFilled } from '@ant-design/icons'
+import Loading from '../LoadingComponents/Loading';
 
 function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   const { nameCategory, nameBrand } = useParams();
@@ -11,6 +12,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   const searchKeyword = new URLSearchParams(location.search).get('keyword');
   const [products, setProducts] = useState([]);
   const propertyNames = ["RAM", "Dung lượng pin", "Chip xử lý (CPU)"];
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (searchKeyword) {
       performSearch(searchKeyword);
@@ -21,9 +23,11 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       .then((response) => {
         const productsData = response.data.data;
         setProducts(productsData);
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Lỗi khi gọi API tìm kiếm: ', error);
+        setLoading(false);
       });
   };
   useEffect(() => {
@@ -95,10 +99,11 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       );
       const productsData = response.data.data;
       setProducts(productsData);
-
+      setLoading(false);
 
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
   const getProductsByCategoryNameHightoLow = async (categoryName) => {
@@ -115,10 +120,11 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       );
       const productsData = response.data.data;
       setProducts(productsData);
-
+      setLoading(false);
 
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
   const getProductsByCategoryNameWithPrice = async (categoryName, minPrice, maxPrice, includeOldPrice, selectedMemory) => {
@@ -137,8 +143,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       );
       const productsData = response.data.data;
       setProducts(productsData);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
   const getProductsByCategoryNameHightoLowWithPrice = async (categoryName, minPrice, maxPrice, includeOldPrice, selectedMemory) => {
@@ -155,8 +163,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
         `${process.env.REACT_APP_API_URL}/product/filter/highToLow/${category._id}?${queryParams}`)
       const productsData = response.data.data;
       setProducts(productsData);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
   const getProductsByCategoryAndBrand = async (categoryName, brandName) => {
@@ -180,9 +190,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       );
       const productsData = response.data.data;
       setProducts(productsData);
-
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   }
 
@@ -207,9 +218,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       );
       const productsData = response.data.data;
       setProducts(productsData);
-
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   }
   const getProductsByCategoryAndBrandWithPrice = async (categoryName, brandName, minPrice, maxPrice, includeOldPrice, selectedMemory) => {
@@ -235,8 +247,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       );
       const productsData = response.data.data;
       setProducts(productsData);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
   const getProductsByCategoryAndBrandHightoLowWithPrice = async (categoryName, brandName, minPrice, maxPrice, includeOldPrice, selectedMemory) => {
@@ -262,8 +276,10 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
       );
       const productsData = response.data.data;
       setProducts(productsData);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi:', error);
+      setLoading(false);
     }
   };
 
@@ -304,7 +320,8 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   .slice(startIndex, endIndex);
 
     return (
-    <div>
+      <Loading isLoading={loading}>
+    <div style={{width:'100%'}}>
       <WrapperFilterCard>
         <ul className='mainContainer' style={{alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
           {productsToDisplay
@@ -330,7 +347,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
                       <div>
                         {product?.ratings.length > 0 ? (
                           <div style={{ display: "flex", flexDirection: 'column' }}>
-                            <Rate disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                            <Rate className='stars' disabled allowHalf value={calculateAverageRating(product.ratings)} />
                             <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
                           </div>
                         ) : (
@@ -376,7 +393,7 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
         style={{ textAlign: 'center', marginBottom: '20px' }}
       />
     </div>
-
+    </Loading>
   );
 }
 

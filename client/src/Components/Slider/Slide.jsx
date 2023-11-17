@@ -19,15 +19,15 @@ const Slide = () => {
         autoplay: true,
         autoplaySpeed: 2000,
         appendDots: (dots) => (
-            <ul style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', listStyle: 'none', padding: '0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <ul style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', listStyle: 'none', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {dots}
             </ul>
         )
     };
-    
+
     return (
-        <WrapperBanner style={{ display: 'flex', lineHeight: 0, height:'auto' }}>
-            <Col  className="mainbanner">
+        <WrapperBanner >
+            <div className="mainbanner">
                 <Slider {...settings} className="slider">
                     {arrImage.map((image) => {
                         return (
@@ -35,11 +35,16 @@ const Slide = () => {
                         )
                     })}
                 </Slider>
-            </Col>
-            <Col  style={{ overflow: 'hidden' }} className="right-banner">
-                <img className="imgsmall" src="../../image/right1.png" alt='right1'></img>
-                <img className="imgsmall" src="../../image/right2.png" alt='right2'></img>
-            </Col>
+            </div>
+            <div className="right-banner">
+                <div className="imgsmall">
+                    <img src="../../image/right1.png" alt='right1'></img>
+                </div>
+                <div className="imgsmall">
+                    <img src="../../image/right2.png" alt='right2'></img>
+                </div>
+            </div>
+
         </WrapperBanner>
     )
 }

@@ -10,6 +10,7 @@ import OrderSuccess from "../pages/ordersuccess";
 import PaymentSuccess from "../pages/paymentVNPAYsuccess";
 import Orders from "../pages/Profile/order/orders";
 import OrderDetail from "../pages/Profile/orderdetail";
+import WarrantySearch from "../Components/TableComponents/Warranty";
 
 
 export const routes = [
@@ -43,7 +44,7 @@ export const routes = [
     {
         path:'/cart',
         page: CartPage,
-        isShowHeader: true
+        isShowHeader: false
     },
     {
         path:'/lowtoHigh',
@@ -88,5 +89,9 @@ export const routes = [
     {
         path:'/order-detail/:orderCode',
         page: OrderDetail
+    },
+    {
+        path:'/warranty',
+        page: WarrantySearch
     }
 ]

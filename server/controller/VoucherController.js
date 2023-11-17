@@ -71,19 +71,53 @@ const addVoucher = async (req, res) => {
 
 
 
-  const updateVoucher = async (req, res) => {
-    try {
-      const { id } = req.params;
-     
-      const updatedVoucher = await Voucher.findByIdAndUpdate(id);
-      if (!updatedVoucher) {
-        return res.status(404).json({ success: false, error: 'Voucher không tồn tại' });
+const updateVoucher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, code, quantity, discount, startDate, endDate } = req.body;
+    const updateFields = {};
+
+    if (name) updateFields.name = name;
+    if (code) updateFields.code = code;
+    if (quantity) updateFields.quantity = quantity;
+    if (discount) updateFields.discount = parseFloat(discount) / 100;
+
+    if (startDate && endDate) {
+      const formatStartDate = format(new Date(startDate), 'dd/MM/yyyy', { locale: vi });
+      const formatEndDate = format(new Date(endDate), 'dd/MM/yyyy', { locale: vi });
+
+      const startDateParts = formatStartDate.split('/');
+      const endDateParts = formatEndDate.split('/');
+
+      const startDateToUpdate = parse(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`, 'yyyy-MM-dd', new Date(), { locale: vi });
+      const endDateToUpdate = parse(`${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}`, 'yyyy-MM-dd', new Date(), { locale: vi });
+
+      if (isAfter(startDateToUpdate, endDateToUpdate)) {
+        return res.status(200).json({ success: false, error: 'Ngày bắt đầu phải trước ngày kết thúc' });
       }
-      res.status(200).json({ success: true, data: updatedVoucher });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
+
+      updateFields.startDate = formatStartDate;
+      updateFields.endDate = formatEndDate;
     }
-  };
+
+    const updatedVoucher = await Voucher.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true }
+    );
+
+    if (!updatedVoucher) {
+      return res.status(404).json({ success: false, error: 'Voucher không tồn tại' });
+    }
+
+    res.status(200).json({ success: true, data: updatedVoucher });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+  
+
+
   const deleteVoucher = async (req, res) => {
     try {
       const { id } = req.params;

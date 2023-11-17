@@ -48,6 +48,13 @@ const TableUser = () => {
             render: theImageURL => <img alt={theImageURL} src={theImageURL} style={{ maxWidth: "100px", maxHeight: "100px" }} />
         },
         {
+            title: "Vai trò",
+            dataIndex: "role_id",
+            render: (role_id) => {
+              return role_id === 1 ? "admin" : role_id === 2 ? "Người dùng" : role_id === 3 ? "Shipper" : " " ;
+            },
+          },
+        {
             render: (text, record) => (
                 <Space size="middle">
                     <a onClick={() => {setDeleteUserVisible(true); setCurrentUserId(record._id)}}> <DeleteOutlined /></a>
@@ -136,7 +143,8 @@ const TableUser = () => {
         if (searchQuery.trim() !== '') {
             axios.get(`${process.env.REACT_APP_API_URL}/user/searchUser?keyword=${searchQuery}`, { headers })
                 .then((response) => {
-                    setSearchResults(response.data.data);
+                    const filteredUsers = response.data.data.filter(user => user.role_id !== 1);
+                    setSearchResults(filteredUsers);
                 })
                 .catch((error) => {
                     console.error('Error searching users:', error);

@@ -1,55 +1,43 @@
 import React, { useState, useEffect } from 'react'
 import { Card } from 'antd';
-import { CardWrapper } from './style';
+import { CardWrapper, Wrapper } from './style';
 import axios from 'axios';
 import { Link, NavLink } from 'react-router-dom';
+import Loading from '../../Components/LoadingComponents/Loading';
 
-const gridStyle = {
-  width: '20%',
-  textAlign: 'center',
-  fontSize: 'auto',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: '5px',
-  minHeight: '185px',
-  height: 'auto',
-};
 const Category = () => {
   const [categories, setCategories] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
 
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/category/getAll`);
         setCategories(response.data.data);
+        setLoading(false);
       } catch (error) {
         console.error('Lỗi khi lấy danh sách danh mục:', error);
+        setLoading(false);
       }
     };
     fetchCategories();
   }, []);
   return (
-    <div>
-      <div style={{padding: '10px', backgroundImage: 'linear-gradient(to right, #5170ff,  #ff66c4)', borderRadius:'6px 6px 0 0'}}>
-      <span style={{ fontSize: '24px', color: '#fff', fontWeight: 600, textTransform: 'uppercase' }} >Danh mục</span>
+    <Wrapper>
+      <div className='background'>
+        <span className='title'>Danh mục sản phẩm</span>
       </div>
+      <Loading isLoading={loading}>
       <CardWrapper >
-        {categories.filter((category) => category.isHide === false).map((category) => (      
-          <Card.Grid
-            key={category._id}
-            style={{ ...gridStyle, height: '100px',backgroundImage: 'linear-gradient(to right, #94b9ff,  #cdffd8)' }}
-            >
-            <NavLink to={`/lowtoHigh/${category.name}`}>
-            <img src={category.picture} className='img-fluid rounded' alt='' />
-            <p>{category.name}</p>
-            </NavLink>
-          </Card.Grid>
+        {categories.filter((category) => category.isHide === false).map((category) => (
+          <NavLink key={category._id} className='card' to={`/lowtoHigh/${category.name}`}>
+            <img src={category.picture} className='img-fluid' alt='' />
+            <p className='cate-name'>{category.name}</p>
+          </NavLink>
         ))}
       </CardWrapper>
-    </div>
+      </Loading>
+    </Wrapper>
 
   )
 }

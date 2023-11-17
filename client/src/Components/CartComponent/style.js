@@ -2,26 +2,22 @@ import styled from "styled-components";
 import {InputNumber} from "antd";
 
 export const HeaderWrapper = styled.div`
-.header-wrapper {
+.cart-page-header {
     display: flex;
     align-items: center;
-    background: #fff;
-    border-bottom: 1px solid rgba(0,0,0,.09);
-    height: 6.25rem;
-    width: 100%;
+    justify-content: space-between;
+    padding: 10px;
+}
+.btn-back{
+    align-items: flex-end;
+    display: flex;
+    height: 2.875rem;
+    color: #8c52ff;
+    cursor: pointer;
+    font-size: 1.25rem;
+    text-transform: capitalize;
+    margin-bottom: 0.12rem;
 
-}
-.header-container {
-    margin-right: auto;
-    margin-left: auto;
-    width: 100%;
-    display: flex;
-    align-items: space-around;
-}
-.cart-page-header {
-    padding-left: 1.125rem;
-    display: flex;
-    flex: 1;
 }
 .cart-page-logo {
     text-decoration: none;
@@ -62,29 +58,14 @@ export const HeaderWrapper = styled.div`
     margin-bottom: 0.0625rem;
     text-transform: capitalize;
 }
-.cart-page-searchbar {
-    width: 38.8125rem;
-    position: relative;
-    display: flex;
-  align-items: center;
-}
-.search-bar {
-    --focus-indicator-spacing: 3px;
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    height: 2.5rem;
-    box-sizing: border-box;
-    padding: 0.1875rem;
-    border-radius: 2px;
-    flex: 1;
-    background: #fff;
-    padding-right: 30px;
-}
-.search-bar button{
-    background-color: #8c52ff;
-  color: white;
-}
+    @media screen and (max-width: 500px) {
+        .cart-page-name{
+            font-size: 15px;
+        }
+        .btn-back{
+            font-size: 15px;
+        }
+    }
 `
 export const WrapperCartList = styled.div`
     .header-list{
@@ -221,5 +202,34 @@ export const WrapperInputNumber = styled(InputNumber)`
         &.ant-input-number-handler-wrap {
             display: none !important;
         }
+    }
+`
+export const WrapperPhoneCart = styled.div`
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    .img-col{
+        width: 20%;
+    }
+    .img-prod{
+        width: 100%;
+    }
+    .inf-col{
+        width:80%;
+    }
+    .pd-name{
+        font-weight: 500;
+    }
+    .pd-total{
+        color: #FF3300;
+    }
+    .quantity{
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+    }
+    .pd-action{
+        margin-right: 50px;
     }
 `

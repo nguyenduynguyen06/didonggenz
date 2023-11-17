@@ -637,8 +637,25 @@ const changeProduct = async (req, res) => {
   await order.save();
   res.status(200).json({ success: true, message: 'Đã cập nhật yêu cầu đổi trả' });
 }
+const checkBH = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    const orders = await Order.find({ userPhone: phone,status:"Đã hoàn thành" }).populate('items.product');
+    if (!orders || orders.length === 0) {
+      return res.status(200).json({ message: "Không tìm thấy đơn hàng" });
+    }
+    const allProducts = orders.reduce((products, order) => {
+      const productsWithCompleteDate = order.items.map(item => ({ ...item.toObject(), completeDate: order.completeDate }));
+      return products.concat(productsWithCompleteDate);
+    }, []);
+    return res.status(200).json({ products: allProducts });
+  } catch (error) {
+    console.error('Lỗi khi kiểm tra bảo hành:', error);
+    return res.status(500).json({ message: "Đã xảy ra lỗi server" });
+  }
+};
 
 
 
 
-module.exports = { changeProduct,getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };
+module.exports = { checkBH,changeProduct,getCanceldOrdersAtStore,addProductRating,getCanceldOrdersShipping,addOrder,cancelOrder,completeOrderUser,getOrdersDetails, updateOrderStatus, getCompletedOrdersAtStore,getCompletedOrdersShipping,completeOrder, getOrdersByUserId, getOrdersHomeDeliveryReady, getOrdersStorePickupgetReady, getOrdersWaitingForConfirmation, deleteOrder,getOrdersShipping,getOrdersStorePickupReady,searchOrder,getOrdersHomeDeliveryShipping,searchOrderAtStoreComplete,searchOrderShippingComplete,searchOrderGetReady,searchOrderShipping,searchOrderGetReadyAtStore,searchOrderReady };

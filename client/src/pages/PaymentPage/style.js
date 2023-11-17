@@ -71,15 +71,33 @@ export const WrapperPaymentInfo = styled.div`
     }
     .item-name {
         color: #111;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 500;
+        display: flex;
+        flex-direction: column;
     }
     .item-price {
         align-items: flex-end;
         display: flex;
         flex-wrap: wrap;
-        gap: 7px;
         justify-content: space-between;
+    }
+    @media screen and (max-width: 500px) {
+        .item-price {
+            align-items: flex-start;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .product__price--show{
+            font-size: 14px;
+        }
+        .product__price--through {
+            font-size: 11px;
+        }
+    
     }
     .box-info__box-price {
         align-items: flex-end;
@@ -165,12 +183,18 @@ export const WrapperPaymentInfo = styled.div`
         border-radius: 10px;
         padding: 15px;
     }
-    @media screen and (min-width: 600px) .info-payment{
-    padding: 20px;
-    }
     .block-promotion{
         display: flex;
         justify-content: space-between;
+    }
+    .button-vou{
+        width: 30%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .button__voucher{
+        width: 90%;
     }
     .info-quote{
         margin-top: 5px;
@@ -223,6 +247,17 @@ export const WrapperPaymentInfo = styled.div`
         padding: 15px;
     }
 `
-export const WrapperBtnNext = styled.div`
+export const PageWrapper = styled.div`
+    background: #efefef;
+    display: flex;
+    justify-content: center;
+    .container{
+        width: 60%;
+    }
+    @media screen and (max-width: 500px) {
+        .container{
+            width:100%;
+        }
+    }
 
 `

@@ -2,76 +2,127 @@ import styled from "styled-components";
 
 export const WrapperSuperHeader = styled.div`
 width: 100%;
-
   .header-container {
-    padding: 30px;
+    width: 100%;
+    padding: 30px 20px;
     height: auto;
     display: flex;
-    flex-wrap: wrap;
     background-image: linear-gradient(to bottom, #004aad,  #cb6ce6);
     align-item:center;
-    justify-content: space-around;
-    list-style: none;
-    background-size: cover;
-    gap: 20px;
   }
-
-  .ant-image {
+  .first-com{
+    width: 20%;
     display: flex;
-    position: relative;
-    align-self: center;
-    cursor: pointer;
-    left: 10px;
+    align-items:center;
+    justify-content: center;
+
   }
-`
-
-
-export const WrapperHeader = styled.div`
-
-`;
-// export const Search = styled(Search)`
-//   .ant-input-search-button {
-//     background: #FF3300;
-//     display: grid;
-//     place-items: center;
-//   }
-// `;
-
-
-export const WrapperHeaderImage = styled.div`
-.logo img{
-  border-radius: 2px;
-  width: 162px;
-  height: 50px;
-}
-`;
-export const WrapperSearch = styled.div`
-  display: flex;
-  width: 500px;
-`
-export const WrapperHeaderAccount = styled.div`
-    // margin: 0 50px;
-    display : flex;
-    align-items: center;
+  .second-com{
+    width: 50%;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+  .third-com{
+    width: 30%;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+  .ant-image {
+    width: 100%;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+  .logo{
+    width: 80%;
+    height: auto;
+  }
+  .logo img{
+    width: 100px;
+    height: auto;
+  }
+  .custom-button {
+    background-image: linear-gradient(to bottom, #ff914d,  #ffde59);
+    color: #000; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-size: 16px; 
+  }
+  .custom-button:hover {
+    background-image: linear-gradient(to bottom,  #ffde59, #ffde59);
+  }
+  .popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .search-box{
+    width: 70%;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+  .btn-cart{
+    width: 50%;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+  .header-acc{
+    width: 50%;
     color: #fff;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+  .link-sp{
+    display: flex;
     gap: 10px;
-    white-space: wrap;
-    position: end;
-    
-    
-    
-    button.custom-button:hover {
-        background-color: #0056b3; /* Màu xanh đậm khi hover */
+  }
+  @media screen and (max-width: 500px) {
+    .header-container{
+      flex-direction: column;
+      gap: 8px;
+      padding: 15px 10px;
     }
-    .popup {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
+    .first-com{
+      width: 100%;
+    }
+    .second-com{
+      width: 100%;
+      padding: 0px 10px;
+    }
+    .third-com{
+      width: 100%;
+      padding: 0px 10px;
+    }
+    .header-acc{
+      justify-content: space-between;
+    }
+    .search-box{
+      width: 100%;
+    }
+  
+    .logo{
+      width: 40%;
+      height: auto;
+    }
+    .btn-cart{
+      justify-content: left;
+    }
+    .header-acc{
+      justify-content: right;
+    }
+    .link-sp{
+      justify-content: space-between;
+      gap: 0;
+    }
+  }
+
 `
 export const WrapperHeaderProduct = styled.div`
     display: flex;
@@ -86,11 +137,7 @@ export const WrapperHeaderProduct = styled.div`
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
 `;
-export const CustomButton = styled.button`
-  background-color: #CC0000;
-  display: grid;
-  place-items: center;
-`;
+
 
 
 export const WrapperForget = styled.div`
@@ -151,19 +198,5 @@ export const WrapperForget = styled.div`
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
-}
-`
-
-export const WrapperCartButton = styled.div`
-button.custom-button {
-  background-image: linear-gradient(to bottom, #ff914d,  #ffde59);
-  color: #000; 
-  padding: 10px 20px; /* Kích thước nút */
-  border: none; /* Loại bỏ đường viền */
-  border-radius: 5px; /* Bo góc nút */
-  cursor: pointer; /* Biến con trỏ thành bàn tay khi hover */
-  font-size: 16px; /* Kích thước chữ */
-  position: static;
-  display : flex;
 }
 `

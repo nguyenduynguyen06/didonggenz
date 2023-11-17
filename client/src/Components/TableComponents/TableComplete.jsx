@@ -4,9 +4,39 @@ import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
 import { AppstoreOutlined,DeleteOutlined } from '@ant-design/icons';
 import './button.css'
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import Search from "antd/es/input/Search";
+import { useSelector } from "react-redux";
+
+import html2canvas from "html2canvas";
+import Invoice from "./Invoice";
 
 const TableComplete = () => {
+  const handlePrintPDF = async (order) => {
+    try {
+      setIsPrinting(true);
+      const pdfDoc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      const canvas = await html2canvas(document.getElementById('invoiceContent'), {
+        scale: 3,
+      });
+      const imgData = canvas.toDataURL('image/png');
+      pdfDoc.addImage(imgData, 'PNG', 0, 0, 210, 297, '', 'FAST');
+      pdfDoc.setFont('Roboto');
+      pdfDoc.save(`order_invoice_${order.orderCode}.pdf`);
+      setIsPrinting(false);
+    } catch (error) {
+      console.error('Error while generating PDF:', error);
+      
+    }
+  };
+  
+  
+  
     const columns = [
       {
         title: 'Mã đơn hàng',
@@ -66,6 +96,7 @@ const TableComplete = () => {
             >
               <AppstoreOutlined />
             </a>
+            
             <Modal
                 title="Danh sách sản phẩm đã đặt"
                 visible={orderModalVisible}
@@ -183,22 +214,65 @@ const TableComplete = () => {
             </Modal>
           </Space>
         ),
+      },
+      {
+        title: 'Hoá đơn',
+        dataIndex: 'actions',
+        render: (text, record) => (
+          <Space size="middle">
+              <a
+              onClick={() => {
+                setInvoice(record)
+                setInvoiceModalVisible(true);
+              }}
+            >
+              <AppstoreOutlined />
+            </a>
+            <Modal
+                visible={invoiceModalVisible}
+                onCancel={() => setInvoiceModalVisible(false)}
+                footer={null}
+                width = {840}
+                >
+              <div id="invoiceContent">
+              <Invoice order={invoice} style={{ width: '100%' }} />
+              </div>
+              <Button
+                onClick={() => handlePrintPDF(invoice)}
+                type="primary"
+                style={{ width: '100%', marginTop: '10px' }}
+                loading={isPrinting} 
+              >
+                {isPrinting ? 'Đang In...' : 'In PDF'}
+              </Button>
+              </Modal>
+          </Space>
+          
+        ),
       },   
     ];
+    const user = useSelector((state)=> state.user)
+    const headers = {
+      token: `Bearers ${user.access_token}`,
+  };
+  const [isPrinting, setIsPrinting] = useState(false);
     const [currrentProductOrder, setCurrrentProduct] = useState(null); 
     const [change, setChange] = useState(false); 
     const [orderDataAtStore, setOrderAtStore] = useState([]); 
     const [orderDataAtShipping, setOrderShipping] = useState([]);
     const [displayOrdersAtStore, setDisplayOrdersAtStore] = useState(true);
     const [orderModalVisible, setOrderModalVisible] = useState(false);
+    const [invoice, setInvoice] = useState(null);
+    const [invoiceModalVisible, setInvoiceModalVisible] = useState(false);
     const [selectProductOrder, setProductOrder] = useState(null);
+ 
     const [searchResultsAtStore, setSearchResultsAtStore] = useState([]);
     const [searchResultsShipping, setSearchResultsShipping] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const handleChangeProduct = async (id,orderId) => {
       try {
         const response = await axios.put(
-          `${process.env.REACT_APP_API_URL}/order/changeProduct?id=${id}&orderId=${orderId}`,null
+          `${process.env.REACT_APP_API_URL}/order/changeProduct?id=${id}&orderId=${orderId}`,null,{headers}
         );
         if (response.data.success) {
           axios

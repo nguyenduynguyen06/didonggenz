@@ -16,9 +16,9 @@ import {
   MDBModal,
   MDBModalHeader
 }
-from 'mdb-react-ui-kit';
+  from 'mdb-react-ui-kit';
 import jwt_decode from "jwt-decode";
-import {useDispatch} from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { updateUser } from "../../redux/Slide/userSlice";
 import Forget from "./forget";
 
@@ -29,12 +29,12 @@ function Login({ onClose }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user, setUser] = useState({
-      email: '',
-      passWord: ''
+    email: '',
+    passWord: ''
   });
   const onChange = event => {
-      event.preventDefault();
-      setUser({ ...user, [event.target.name]: event.target.value });
+    event.preventDefault();
+    setUser({ ...user, [event.target.name]: event.target.value });
   }
 
   const [centredModal, setCentredModal] = useState(false);
@@ -76,56 +76,56 @@ function Login({ onClose }) {
       setMessage('Hãy kiểm tra lại email');
     }
   };
-  
- const handleGetDetails = async (id,access_Token) => {
+
+  const handleGetDetails = async (id, access_Token) => {
     try {
       const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/get-Detail/${id}`, {
-          headers: {
-            token: `Bearer ${access_Token}`, 
-          }
+        headers: {
+          token: `Bearer ${access_Token}`,
+        }
       })
-        dispatch(updateUser({...res.data.data, access_token: access_Token}))
-  } catch (error) {
+      dispatch(updateUser({ ...res.data.data, access_token: access_Token }))
+    } catch (error) {
       console.log('Lỗi:', error);
+    }
   }
-}
 
 
 
   return (
     <div>
-    <form className="form-add-new" onSubmit={(e) => {
-      loginHandler(e);  
-  }} >
-    <MDBContainer fluid>
-      <MDBRow className='d-flex justify-content-center align-items-center h-100'>
-        <MDBCol col='12'>
-          <MDBCard className='bg-white my-5 mx-auto' style={{borderRadius: '1rem', maxWidth: '500px'}}>
-            <MDBCardBody className='p-5 w-100 d-flex flex-column'>
-            {message && (
-                <h4 className="fw-bold mb-2 text-center">
-                    <i className="fas fa-times-circle" style={{ color: 'red' }}>&nbsp;</i>
-                    {message}
-                </h4>
-            )}
-      
-              <h2 className="fw-bold mb-2 text-center">Đăng nhập</h2>
-              <p className="text-white-50 mb-3"></p>
+      <form className="form-add-new" onSubmit={(e) => {
+        loginHandler(e);
+      }} >
+        <MDBContainer fluid>
+          <MDBRow className='d-flex justify-content-center align-items-center h-100'>
+            <MDBCol col='12'>
+              <MDBCard className='bg-white my-5 mx-auto' style={{ borderRadius: '1rem', maxWidth: '500px' }}>
+                <MDBCardBody className='p-5 w-100 d-flex flex-column'>
+                  {message && (
+                    <h4 className="fw-bold mb-2 text-center">
+                      <i className="fas fa-times-circle" style={{ color: 'red' }}>&nbsp;</i>
+                      {message}
+                    </h4>
+                  )}
 
-              <MDBInput wrapperClass='mb-4 w-100' label='Email'  name="email" value={user.email} type='email' size="lg" onChange={onChange}/>
-              <MDBInput wrapperClass='mb-4 w-100' label='Password' name="passWord" value={user.passWord} type='password' size="lg" onChange={onChange}/>
+                  <h2 className="fw-bold mb-2 text-center">Đăng nhập</h2>
+                  <p className="text-white-50 mb-3"></p>
+
+                  <MDBInput wrapperClass='mb-4 w-100' label='Email' name="email" value={user.email} type='email' size="lg" onChange={onChange} />
+                  <MDBInput wrapperClass='mb-4 w-100' label='Password' name="passWord" value={user.passWord} type='password' size="lg" onChange={onChange} />
 
 
-              <MDBBtn size='lg' type="submit" >
-                Login
-              </MDBBtn>
-              <div className=" text-center"> 
-              <hr className="my-4" />
-              <span style={{fontSize: '15px',cursor:'pointer',color:'#FF3300'}} clickable class= "popup" onClick={toggleShow} >
-                  Quên mật khẩu?
-                </span>
-              </div>
-              {/*
+                  <MDBBtn size='lg' type="submit" >
+                    Login
+                  </MDBBtn>
+                  <div className=" text-center">
+                    <hr className="my-4" />
+                    <span style={{ fontSize: '15px', cursor: 'pointer', color: '#FF3300' }} clickable class="popup" onClick={toggleShow} >
+                      Quên mật khẩu?
+                    </span>
+                  </div>
+                  {/*
 
               <MDBBtn className="mb-2 w-100" size="lg" style={{backgroundColor: '#dd4b39'}}>
                 <MDBIcon fab icon="google" className="mx-2"/>
@@ -136,27 +136,27 @@ function Login({ onClose }) {
                 <MDBIcon fab icon="facebook-f" className="mx-2"/>
                 Sign in with facebook
               </MDBBtn> */}
-            </MDBCardBody>
-          </MDBCard>
+                </MDBCardBody>
+              </MDBCard>
 
-        </MDBCol>
-      </MDBRow>
-    </MDBContainer>
-    </form>
-    <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
+            </MDBCol>
+          </MDBRow>
+        </MDBContainer>
+      </form>
+      <MDBModal tabIndex='-1' show={centredModal} setShow={setCentredModal}>
         <MDBModalDialog centered>
           <MDBModalContent>
             <MDBModalHeader>
               <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
             </MDBModalHeader>
             <MDBModalBody>
-             <Forget onClose={closePopup}/>
+              <Forget onClose={closePopup} />
             </MDBModalBody>
           </MDBModalContent>
         </MDBModalDialog>
       </MDBModal>
 
-    
+
     </div>
   );
 }

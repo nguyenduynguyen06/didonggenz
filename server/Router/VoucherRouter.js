@@ -5,7 +5,7 @@ const voucherController = require('../controller/VoucherController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 router.post('/addVoucher',authMiddleware, voucherController.addVoucher);
 router.get('/getVoucher',authMiddleware, voucherController.getVouchers);
-router.put('/updateVoucher/:id',authMiddleware, voucherController.updateVoucher);
+router.put('/updateVoucher/:id', voucherController.updateVoucher);
 router.delete('/deleteVoucher/:id',authMiddleware, voucherController.deleteVoucher);
 router.post('/useVoucher', voucherController.useVoucher);
 module.exports = router;

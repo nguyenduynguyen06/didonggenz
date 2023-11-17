@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react"
-import { Button, Col, Image, Row, Table, Rate, message } from 'antd'
+import { Button, Col, Image, Row, Table, Rate, message, Input } from 'antd'
 import {
     WrapperStyleColImage,
     WrapperStyleImageSmall,
     WrapperStyleImageBig,
-    WrapperStyleNameProduct,
     WrapperStyleTextSell,
     WrapperPriceTextProduct,
     WrapperPriceProduct,
@@ -20,6 +19,7 @@ import ProductDescription from "./productdesscription"
 import CommentBox from "./commentcomponent"
 import axios from "axios"
 import { NavLink, useParams } from "react-router-dom"
+import { ArrowLeftOutlined } from "@ant-design/icons"
 
 import Slider from 'react-slick';
 
@@ -185,7 +185,7 @@ const ProductDetailComponents = () => {
                     message.success('Thêm vào giỏ hàng thành công', 1); // Thông báo sẽ tự đóng sau 2 giây
                     // Chuyển đến trang giỏ hàng sau khi thông báo đóng
                     setTimeout(() => {
-                        window.location.href = '/cart'; 
+                        window.location.href = '/cart';
                     }, 1000); // Chờ 2 giây trước khi chuyển trang
                 }
             } else {
@@ -195,7 +195,7 @@ const ProductDetailComponents = () => {
                 message.success('Thêm vào giỏ hàng thành công', 1); // Thông báo sẽ tự đóng sau 2 giây
                 // Chuyển đến trang giỏ hàng sau khi thông báo đóng
                 setTimeout(() => {
-                    window.location.href = '/cart'; 
+                    window.location.href = '/cart';
                 }, 1000); // Chờ 2 giây trước khi chuyển trang
             }
         } catch (error) {
@@ -246,30 +246,41 @@ const ProductDetailComponents = () => {
         totalRating = productDetails.ratings.reduce((total, review) => total + review.rating, 0);
         averageRating = totalRating / productDetails.ratings.length;
     }
+    const goBack = () => {
+        window.history.back();
+    };
     return (
         <WrapperDetail>
-            <Row style={{ padding: '15px 12px' }}>
+            <div style={{background:'#fff', padding: '10px'}}>
+                <button style={{ border: 'none', background: 'transparent'}} onClick={goBack}>
+                    <ArrowLeftOutlined /> Quay lại
+                </button>
+            </div>
+            <Row style={{ background: '#fff' }} >
+
                 {productDetails ? (
                     memory !== `undefined` ? (
-                        <div style={{ display: "flex", gap: '20px' }}>
-                            <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>
+                        <div className="product-name">
+                            <h5 style={{ margin: 0 }}>
                                 {productDetails.name} {memory}
-                            </WrapperStyleNameProduct>
-                            <Rate disabled allowHalf value={averageRating} />
-                            <span style={{ fontSize: 16, paddingTop: 6 }}>{averageRating.toFixed(1)}</span>
+                            </h5>
+                            <div className="rate-ave">
+                                <Rate disabled allowHalf value={averageRating} />
+                                <span style={{ fontSize: 16 }}>{averageRating.toFixed(1)}</span>
+                            </div>
                         </div>
 
                     ) : (
                         <div>
-                            <WrapperStyleNameProduct style={{ fontWeight: 'bold' }}>{productDetails.name}</WrapperStyleNameProduct>
+                            <h3>{productDetails.name}</h3>
                         </div>
                     )
                 ) : (
                     <p>Loading...</p>
                 )}
             </Row>
-            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
-                <Col span={14} style={{ border: '1px solid #e5e5e5', padding: '8px' }}>
+            <Row className="product-pick">
+                <Col className="slider-col">
                     <Slider {...sliderSettings} className="slider" style={{ border: '1px solid #ccc', borderRadius: '4px' }}>
                         {productDetails && productDetails.thumnails.slice(1).map((thumbnail, index) => (
                             <WrapperStyleImageBig key={index}>
@@ -279,7 +290,7 @@ const ProductDetailComponents = () => {
                             </WrapperStyleImageBig>
                         ))}
                     </Slider>
-                    <Row style={{ marginTop: '10px', paddingTop: '10px', justifyContent: 'flex-start', border: '1px solid #ccc', borderRadius: '4px' }}>
+                    <Row style={{ display: 'flex', marginTop: '10px', padding: '5px', alignItems: 'center', justifyContent: 'flex-start', border: '1px solid #ccc', borderRadius: '4px' }}>
                         {productDetails && productDetails.variant && selectedMemories[productDetails._id] ? (
                             productDetails.variant
                                 .filter((variant) => variant.memory === selectedMemories[productDetails._id])
@@ -294,51 +305,11 @@ const ProductDetailComponents = () => {
                                 )
                         ) : null}
                     </Row>
-                    <hr></hr>
-                    <WrapperPolicy>
-                        <div className="policy_intuitive cate42 scenarioNomal">
-                            <div className="policy">
-
-                                <ul className="policy__list">
-                                    <li>
-                                        <RetweetOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></RetweetOutlined>
-                                        <p>
-                                            1 đổi 1 trong&nbsp;
-                                            <b>3 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
-                                            <a href="/" title="Chính sách dổi trả">Xem chi tiết</a>
-                                        </p>
-                                    </li>
-                                    {productDetails && productDetails.warrantyPeriod ? (
-                                        <li data-field="IsSameBHAndDT">
-                                            <PropertySafetyOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></PropertySafetyOutlined>
-                                            <p>Bảo hành chính hãng điện thoại&nbsp;
-                                                <b>{productDetails.warrantyPeriod} tháng</b> tại các trung tâm bảo hành hãng&nbsp;
-                                                <a href="/" title="Chính sách bảo hành">Xem chính sách bảo hành</a>
-                                            </p>
-                                        </li>
-                                    ) : (
-                                        <li data-field="IsSameBHAndDT">
-                                            <PropertySafetyOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></PropertySafetyOutlined>
-                                            <p> Không bảo hành
-                                            </p>
-                                        </li>
-                                    )}
-                                    {productDetails && productDetails.include ? (
-                                        <li>
-                                            <DropboxOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></DropboxOutlined>
-                                            <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: {productDetails.include} </p>
-                                        </li>
-                                    ) : null}
-                                </ul>
-
-                            </div>
-                        </div>
-                    </WrapperPolicy>
                 </Col>
-                <Col span={10} style={{ paddingLeft: '10px' }}>
-                    <div style={{ padding: '0 0 10px' }}>
+                <br></br>
+                <Col className="pick-col">
+                    <div className="button-row" style={{ padding: '0 0 10px' }}>
                         {productDetails?.variant.map((variant) => (
-
                             variant?.memory && (
                                 <NavLink to={`/product/${productName}/${variant.memory}`}>
                                     <Button
@@ -365,52 +336,55 @@ const ProductDetailComponents = () => {
                                 if (variant.memory === selectedMemories[productDetails._id]) {
                                     return (
                                         <div style={{ padding: '10xp' }} key={variant._id}>
-                                            {uniqueColors.map((color, index) => (
-                                                <Button
-                                                    key={index}
-                                                    className={`memory-button ${color === selectedColor[variant._id] ? 'selected' : ''
-                                                        }`}
-                                                    onClick={() => {
-                                                        setSelectedColor((prevSelected) => ({
-                                                            ...prevSelected,
-                                                            [variant._id]: color,
-                                                        }));
-                                                        const selectedAttribute = variant.attributes.find(
-                                                            (attribute) => attribute.color === color
-                                                        );
-                                                        if (selectedAttribute) {
-                                                            setSelectedSold((prevSelected) => ({
+                                            <div className="btn-color" >
+
+                                                {uniqueColors.map((color, index) => (
+                                                    <Button
+                                                        key={index}
+                                                        className={`memory-button ${color === selectedColor[variant._id] ? 'selected' : ''
+                                                            }`}
+                                                        onClick={() => {
+                                                            setSelectedColor((prevSelected) => ({
                                                                 ...prevSelected,
-                                                                [variant._id]: selectedAttribute.sold,
+                                                                [variant._id]: color,
                                                             }));
-                                                            setSelectedSKU((prevSelected) => ({
-                                                                ...prevSelected,
-                                                                [variant._id]: selectedAttribute.sku,
-                                                            }));
-                                                            setSelectedQuantity((prevSelected) => ({
-                                                                ...prevSelected,
-                                                                [variant._id]: selectedAttribute.quantity,
-                                                            }));
-                                                        } else {
-                                                            setSelectedSold((prevSelected) => ({
-                                                                ...prevSelected,
-                                                                [variant._id]: 'N/A',
-                                                            }));
-                                                            setSelectedSKU((prevSelected) => ({
-                                                                ...prevSelected,
-                                                                [variant._id]: 'N/A',
-                                                            }));
-                                                            setSelectedQuantity((prevSelected) => ({
-                                                                ...prevSelected,
-                                                                [variant._id]: 'N/A',
-                                                            }));
-                                                        }
-                                                    }}
-                                                    style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
-                                                >
-                                                    {color}
-                                                </Button>
-                                            ))}
+                                                            const selectedAttribute = variant.attributes.find(
+                                                                (attribute) => attribute.color === color
+                                                            );
+                                                            if (selectedAttribute) {
+                                                                setSelectedSold((prevSelected) => ({
+                                                                    ...prevSelected,
+                                                                    [variant._id]: selectedAttribute.sold,
+                                                                }));
+                                                                setSelectedSKU((prevSelected) => ({
+                                                                    ...prevSelected,
+                                                                    [variant._id]: selectedAttribute.sku,
+                                                                }));
+                                                                setSelectedQuantity((prevSelected) => ({
+                                                                    ...prevSelected,
+                                                                    [variant._id]: selectedAttribute.quantity,
+                                                                }));
+                                                            } else {
+                                                                setSelectedSold((prevSelected) => ({
+                                                                    ...prevSelected,
+                                                                    [variant._id]: 'N/A',
+                                                                }));
+                                                                setSelectedSKU((prevSelected) => ({
+                                                                    ...prevSelected,
+                                                                    [variant._id]: 'N/A',
+                                                                }));
+                                                                setSelectedQuantity((prevSelected) => ({
+                                                                    ...prevSelected,
+                                                                    [variant._id]: 'N/A',
+                                                                }));
+                                                            }
+                                                        }}
+                                                        style={{ padding: '5px 5px', marginInlineEnd: '5px' }}
+                                                    >
+                                                        {color}
+                                                    </Button>
+                                                ))}
+                                            </div>
                                             <WrapperStyleTextSell>
                                                 <p>SKU: {selectedSKU[variant._id]}</p>
                                                 <p>Đã bán: {selectedSold[variant._id]}</p>
@@ -423,46 +397,35 @@ const ProductDetailComponents = () => {
                             return null;
                         })}
                     </div>
-
                     {productDetails ? (
-                        <WrapperPriceProduct>
-                            <WrapperPriceProduct style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
-                                {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                            </WrapperPriceProduct>
+                        <div>
                             <WrapperPriceTextProduct>
                                 {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                             </WrapperPriceTextProduct>
-                        </WrapperPriceProduct>
+                            <span style={{ color: '#000', textDecoration: 'line-through' }}>
+                                {productDetails?.variant.find((variant) => variant.memory === selectedMemories[productDetails._id])?.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                            </span>
+                        </div>
                     ) : (
                         <p>Loading...</p>
                     )}
-
                     <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
                         <div style={{ marginBottom: '10px' }}>Số lượng:</div>
-                        <WrapperQuantityProduct>
-                            <button
-                                style={{ border: 'none', background: 'transparent' }}
-                                onClick={handleDecreaseQuantity}>
-                                <MinusOutlined style={{ color: '#000', fontSize: '20px' }} />
-                            </button>
+                        <div>
+                            <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '5px' }} onClick={handleDecreaseQuantity}>-</Button>
                             <WrapperInputNumber
                                 type="number"
                                 value={quantity}
                                 onChange={handleChange}
-                                size="small"
-                                style={{ width: '60px' }}
+                                size="middle"
+                                defaultValue={1}
                                 upHandler={null}
                                 downHandler={null}
                                 min={1}
                                 max={3}
                             />
-
-                            <button
-                                style={{ border: 'none', background: 'transparent' }}
-                                onClick={handleIncreaseQuantity}>
-                                <PlusOutlined style={{ color: '#000', fontSize: '20px' }} />
-                            </button>
-                        </WrapperQuantityProduct>
+                            <Button type="primary" size='medium' style={{ background: 'transparent', border: '1px solid #ccc', color: '#000', boxShadow: 'none', borderRadius: '5px' }} onClick={handleIncreaseQuantity}>+</Button>
+                        </div>
                     </div >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <ButtonComponent
@@ -495,23 +458,66 @@ const ProductDetailComponents = () => {
                         </ButtonComponent>
                     </div>
                     <br></br>
-                    <div style={{ height: '600px', textAlign: 'justify' }}>
-                        {productDetails && productDetails.promotion ? (
-                            <div style={{ fontSize: '20px' }}>
-                                <div style={{ fontSize: '40px', color: 'red' }}> <GiftOutlined /> Khuyến mãi </div>
-                                <div>(chỉ áp dụng tại cửa hàng)</div>
-                                <ProductSale promotion={productDetails.promotion} />
-                            </div>
-                        ) : (
-                            null
-                        )}
-                    </div>
                 </Col>
-            </Row>
+                <Row>
+                    <Col className="policy-col">
+                        <WrapperPolicy>
+                            <div className="policy_intuitive cate42 scenarioNomal">
+                                <div className="policy">
+                                    <ul className="policy__list">
+                                        <li className="policy-item">
+                                            <RetweetOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></RetweetOutlined>
+                                            <p>
+                                                1 đổi 1 trong&nbsp;
+                                                <b>3 ngày&nbsp;</b>đối với sản phẩm là điện thoại và trong thời gian bảo hành đối với sản phẩm là phụ kiện&nbsp;
+                                                <a href="/" title="Chính sách dổi trả">Xem chi tiết</a>
+                                            </p>
+                                        </li>
+                                        {productDetails && productDetails.warrantyPeriod ? (
+                                            <li className="policy-item" data-field="IsSameBHAndDT">
+                                                <PropertySafetyOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></PropertySafetyOutlined>
+                                                <p>Bảo hành chính hãng điện thoại&nbsp;
+                                                    <b>{productDetails.warrantyPeriod} tháng</b> tại các trung tâm bảo hành hãng&nbsp;
+                                                    <a href="/" title="Chính sách bảo hành">Xem chính sách bảo hành</a>
+                                                </p>
+                                            </li>
+                                        ) : (
+                                            <li className="policy-item" data-field="IsSameBHAndDT">
+                                                <PropertySafetyOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></PropertySafetyOutlined>
+                                                <p> Không bảo hành
+                                                </p>
+                                            </li>
+                                        )}
+                                        {productDetails && productDetails.include ? (
+                                            <li className="policy-item">
+                                                <DropboxOutlined style={{ fontSize: '30px', left: 0, position: 'absolute', top: '18px' }}></DropboxOutlined>
+                                                <p>Bộ sản phẩm gồm Bộ sản phẩm gồm: {productDetails.include} </p>
+                                            </li>
+                                        ) : null}
+                                    </ul>
 
+                                </div>
+                            </div>
+                        </WrapperPolicy>
+                    </Col>
+                    <Col className="sale-col">
+                        <Row style={{ height: 'auto', textAlign: 'justify' }}>
+                            {productDetails && productDetails.promotion ? (
+                                <div style={{ fontSize: '14px' }}>
+                                    <div style={{ fontSize: '20px', color: 'red' }}> <GiftOutlined /> Khuyến mãi </div>
+                                    <div>(chỉ áp dụng tại cửa hàng)</div>
+                                    <ProductSale promotion={productDetails.promotion} />
+                                </div>
+                            ) : (
+                                null
+                            )}
+                        </Row>
+                    </Col>
+                </Row>
+            </Row>
             <hr className="my-4" />
             <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
-                <Col span={16} style={{ border: '1px solid #e5e5e5', padding: '10px', borderRadius: '4px' }}>
+                <Col className="des-col">
                     <h3>Mô tả sản phẩm</h3>
                     <div style={{ height: '600px', overflowY: 'scroll', textAlign: 'justify' }}>
                         {productDetails ? (
@@ -521,24 +527,24 @@ const ProductDetailComponents = () => {
                         )}
                     </div>
                 </Col>
-                <Col span={8} style={{ paddingLeft: '10px', textAlign: 'center' }}>
-                <WrapperPropTable dataSource={dataSource} pagination={false}>
-                    <ColumnGroup title="Thông số kỹ thuật">
-                        <Column dataIndex="prop" key="prop" />
-                        <Column
-                        dataIndex="info"
-                        key="info"
-                        render={(text, record) => {
-                            const containsHTML = /<[a-z][\s\S]*>/i.test(text);
-                            return containsHTML ? (
-                            <div dangerouslySetInnerHTML={{ __html: text }} />
-                            ) : (
-                            text
-                            );
-                        }}
-                        />
-                    </ColumnGroup>
-                </WrapperPropTable>
+                <Col className="prop-col" >
+                    <WrapperPropTable dataSource={dataSource} pagination={false}>
+                        <ColumnGroup title="Thông số kỹ thuật">
+                            <Column dataIndex="prop" key="prop" />
+                            <Column
+                                dataIndex="info"
+                                key="info"
+                                render={(text, record) => {
+                                    const containsHTML = /<[a-z][\s\S]*>/i.test(text);
+                                    return containsHTML ? (
+                                        <div dangerouslySetInnerHTML={{ __html: text }} />
+                                    ) : (
+                                        text
+                                    );
+                                }}
+                            />
+                        </ColumnGroup>
+                    </WrapperPropTable>
                 </Col>
             </Row>
             <hr className="my-4" />

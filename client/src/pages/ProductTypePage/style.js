@@ -12,6 +12,7 @@ export const WrapperFilterList = styled.nav`
 padding: 10px;
 display: flex;
 gap: 10px;
+flex-wrap: wrap;
 .ant-dropdown-menu-item {
     padding: 8px 16px;
   }
@@ -38,17 +39,41 @@ gap: 10px;
     border: 1px solid #FE3300;
   }
 `
-export const WrapperTextValue =styled.a`
-    color: rgb(56,56,61);
+export const WrapperTextValue =styled.div`
+  margin-top: 10px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid  #9999ff; 
+  padding: 10px;
+  &:hover {
+    a{
+      color:#fff;
+    }
+    border: 1px solid  #fff; 
+    background: #9999ff;
+  }
+  a {
     font-size:16px;
     font-weight: 500px;
-    cursor: pointer;
-    text-align: center; /* Center-align the text */
-
+    text-align: center;
+    &:hover{
+      color: #fff;
+    }
+  }
+  ${(props) =>
+    props.active &&
+    `
+    border: 1px solid #fff;
+    background: #9999ff;
+    div {
+      color: #fff;
+    }
+  `}
 `
 export const WrapperContent = styled.div`
     display: flex;
     font-size: 14px;
+
     //align-items: center;
     gap: 12px;
 `
