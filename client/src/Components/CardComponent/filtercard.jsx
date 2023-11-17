@@ -316,83 +316,83 @@ function FilterCard({ minPrice, maxPrice, includeOldPrice, selectedMemory }) {
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
   const productsToDisplay = products
-  .filter((product) => product.isHide === false)
-  .slice(startIndex, endIndex);
+    .filter((product) => product.isHide === false)
+    .slice(startIndex, endIndex);
 
-    return (
-      <Loading isLoading={loading}>
-    <div style={{width:'100%'}}>
-      <WrapperFilterCard>
-        <ul className='mainContainer' style={{alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
-          {productsToDisplay
-            .filter((product) => product.isHide === false)
-            .map((product) => (
-              product.variant.map((variant) => (
-                <li className='box' key={product._id + variant.memory} style={{ padding: '0' }} >
-                  <NavLink className='card' to={`/product/${product.name}/${variant.memory}`}>
-                    <div className='item-label'>
-                      {variant.oldPrice && (
-                        <span className='lb-dis'>
-                          Giảm giá {calculateDiscountPercentage(variant.newPrice, variant.oldPrice)}%
+  return (
+    <Loading isLoading={loading}>
+      <div style={{ width: '100%' }}>
+        <WrapperFilterCard>
+          <ul className='mainContainer' style={{ alignItems: 'center', justifyContent: 'center', listStyle: 'none' }}>
+            {productsToDisplay
+              .filter((product) => product.isHide === false)
+              .map((product) => (
+                product.variant.map((variant) => (
+                  <li className='box' key={product._id + variant.memory} style={{ padding: '0' }} >
+                    <NavLink className='card' to={`/product/${product.name}/${variant.memory}`}>
+                      <div className='item-label'>
+                        {variant.oldPrice && (
+                          <span className='lb-dis'>
+                            Giảm giá {calculateDiscountPercentage(variant.newPrice, variant.oldPrice)}%
                           </span>
-                      )}
-                    </div>
-                    <div className='image' style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }} >
-                      <img src={product.thumnails[0]} />
-                    </div>
-                    <div className='desc' style={{alignContent:'start'}}>
-                      <div style={{ height: '3em' }}>
-                        <h1 style={{ padding: 3 }}>{product.name} - {variant.memory}</h1>
-                      </div>
-                      <div>
-                        {product?.ratings.length > 0 ? (
-                          <div style={{ display: "flex", flexDirection: 'column' }}>
-                            <Rate className='stars' disabled allowHalf value={calculateAverageRating(product.ratings)} />
-                            <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
-                          </div>
-                        ) : (
-                          null
                         )}
-                        <div style={{ padding: '0 0 30px 0' }}>
-                          <p style={{ fontWeight: 700, height: '20px' }}>
-                            {variant.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                          </p>
-                          <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
-                            {variant.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                          </p>
+                      </div>
+                      <div className='image' style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }} >
+                        <img src={product.thumnails[0]} />
+                      </div>
+                      <div className='desc' style={{ alignContent: 'start' }}>
+                        <div style={{ height: '3em' }}>
+                          <h1 style={{ padding: 3 }}>{product.name} - {variant.memory}</h1>
                         </div>
                         <div>
-                          {propertyNames.map((propertyName, index) => {
-                            const propertyValue = product?.properties?.[propertyName];
-                            if (propertyValue !== undefined) {
-                              return (
-                                <div style={{ padding: '0 7px', display: 'flex', alignItems: 'center' }}>
-                                  <i class="fas fa-circle" style={{ fontSize: 3 }}></i>
-                                  <p key={index} style={{ fontSize: '13px', color: 'black', textAlign: 'left', paddingLeft: '10px', margin: '0', lineHeight: '19px' }}>
-                                    {propertyName}: {propertyValue}
-                                  </p>
-                                </div>
-                              );
-                            }
-                            return null; // To skip properties that don't exist in the product data
-                          })}
+                          {product?.ratings.length > 0 ? (
+                            <div style={{ display: "flex", flexDirection: 'column' }}>
+                              <Rate className='stars' disabled allowHalf value={calculateAverageRating(product.ratings)} />
+                              <span style={{ margin: 0, height: '25px', fontSize: '13px' }}>Lượt đánh giá: {calculateTotalRatings(product)}</span>
+                            </div>
+                          ) : (
+                            null
+                          )}
+                          <div style={{ padding: '0 0 30px 0' }}>
+                            <p style={{ fontWeight: 700, height: '20px' }}>
+                              {variant.newPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                            </p>
+                            <p style={{ color: '#000', textDecoration: 'line-through', height: '20px' }}>
+                              {variant.oldPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                            </p>
+                          </div>
+                          <div>
+                            {propertyNames.map((propertyName, index) => {
+                              const propertyValue = product?.properties?.[propertyName];
+                              if (propertyValue !== undefined) {
+                                return (
+                                  <div style={{ padding: '0 7px', display: 'flex', alignItems: 'center' }}>
+                                    <i class="fas fa-circle" style={{ fontSize: 3 }}></i>
+                                    <p key={index} style={{ fontSize: '13px', color: 'black', textAlign: 'left', paddingLeft: '10px', margin: '0', lineHeight: '19px' }}>
+                                      {propertyName}: {propertyValue}
+                                    </p>
+                                  </div>
+                                );
+                              }
+                              return null; 
+                            })}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </NavLink>
-                </li>
-              ))
-            ))}
-        </ul>
-      </WrapperFilterCard>
-      <Pagination
-        defaultCurrent={1}
-        current={currentPage}
-        total={products.length}
-        onChange={(page) => setCurrentPage(page)}
-        style={{ textAlign: 'center', marginBottom: '20px' }}
-      />
-    </div>
+                    </NavLink>
+                  </li>
+                ))
+              ))}
+          </ul>
+        </WrapperFilterCard>
+        <Pagination
+          defaultCurrent={1}
+          current={currentPage}
+          total={products.length}
+          onChange={(page) => setCurrentPage(page)}
+          style={{ textAlign: 'center', marginBottom: '20px' }}
+        />
+      </div>
     </Loading>
   );
 }

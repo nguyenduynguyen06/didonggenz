@@ -37,6 +37,7 @@ export const WrapperInvoice = styled.div`
         flex-direction: column;
         text-align: left;
     }
+    
 `
 export const WrapperWarranty = styled.div`
     width: 100%;
@@ -64,5 +65,16 @@ export const WrapperWarranty = styled.div`
     }
     .table{
         padding: 20px;
+    }
+    .btn-back{
+        align-items: flex-end;
+        display: flex;
+        height: 2.875rem;
+        color: #8c52ff;
+        cursor: pointer;
+        font-size: 1.25rem;
+        text-transform: capitalize;
+        margin-bottom: 0.12rem;
+    
     }
 `

@@ -151,6 +151,7 @@ function CartList() {
         })
         .catch((error) => {
           console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+          setLoading(false);
         });
     }
   }, [user]);
@@ -254,6 +255,7 @@ function CartList() {
     if (isMobile) {
       // Render mobile content
       return (
+ 
         <>
         <Loading isLoading={loading}>
         {data && data.map((item,index) => (
@@ -325,8 +327,9 @@ function CartList() {
       );
     } else {
       return (
-        <Loading isLoading={loading}>
+        
         <>
+        <Loading isLoading={loading}>
           <Table
             columns={tableColumns}
             dataSource={data}
@@ -347,8 +350,9 @@ function CartList() {
               </Link>
             </div>
           </div>
+          </Loading>
         </>
-        </Loading>
+     
       );
     }
   };
